@@ -769,10 +769,10 @@ export default function App() {
 
             <div className="mb-12">
               <a
-                href="mailto:francisco@example.com"
+                href="mailto:mq21004@ues.edu.sv"
                 className="text-2xl md:text-4xl font-bold text-brand-primary hover:underline underline-offset-8 decoration-4 transition-all break-all"
               >
-                francisco@example.com
+                mq21004@ues.edu.sv
               </a>
             </div>
 
@@ -827,7 +827,7 @@ export default function App() {
       </footer>
 
       <a
-        href="mailto:francisco@example.com"
+        href="mailto:mq21004@ues.edu.sv"
         className="fixed bottom-8 right-8 p-4 bg-brand-primary text-brand-bg rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all z-50 hidden md:flex"
         aria-label="Enviar correo"
       >
