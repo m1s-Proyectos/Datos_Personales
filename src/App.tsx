@@ -270,18 +270,20 @@ export default function App() {
         </div>
 
         <div className="section-container relative z-10">
-          <div className="max-w-3xl">
-            <div className="flex flex-col items-center gap-4 w-full mb-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex flex-col items-center gap-4 w-full mb-10">
               <motion.div
                 initial="hidden"
                 animate="visible"
                 variants={fadeIn}
               >
                 <img
-                  src="/yo.jpg"
+                  src={`${import.meta.env.BASE_URL}yo.jpg`}
                   alt="Francisco Javier Martínez"
                   width={160}
                   height={160}
+                  decoding="async"
+                  fetchPriority="high"
                   className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-brand-primary/50 shadow-lg ring-2 ring-brand-primary/20"
                 />
               </motion.div>
@@ -296,37 +298,43 @@ export default function App() {
               </motion.span>
             </div>
 
-            <motion.h1
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeIn}
-              className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight mb-6"
-            >
-              Francisco Javier Martínez
-            </motion.h1>
+            <div className="text-center space-y-5 mb-10">
+              <motion.h1
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeIn}
+                className="text-5xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-balance"
+              >
+                Francisco Javier Martínez
+              </motion.h1>
 
-            <motion.p
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeIn}
-              className="text-xl md:text-2xl text-brand-primary font-semibold mb-4"
-            >
-              Desarrollo aplicaciones del mundo real
-            </motion.p>
+              <motion.p
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeIn}
+                className="text-lg md:text-xl text-brand-on-surface font-medium leading-snug max-w-2xl mx-auto"
+              >
+                Soluciones web orientadas a negocio:{" "}
+                <span className="text-brand-primary">
+                  pagos, reservas y producto digital
+                </span>
+                .
+              </motion.p>
 
-            <motion.p
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeIn}
-              className="text-lg md:text-xl text-brand-on-surface-muted mb-10 max-w-xl leading-relaxed"
-            >
-              Desarrollador web enfocado en sistemas de pago, plataformas de
-              reservas, marketplaces y soluciones basadas en producto, con
-              JavaScript, Ruby on Rails y bases de datos relacionales.
-            </motion.p>
+              <motion.p
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeIn}
+                className="text-base md:text-[17px] text-brand-on-surface-muted max-w-xl mx-auto leading-relaxed"
+              >
+                Diseño y desarrollo full stack con JavaScript, Ruby on Rails y
+                bases de datos relacionales; foco en código mantenible y impacto
+                medible.
+              </motion.p>
+            </div>
 
             <motion.div
               initial="hidden"
