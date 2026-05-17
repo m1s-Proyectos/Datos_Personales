@@ -51,7 +51,7 @@ const staggerContainer = {
 const projects = [
   {
     title: "Plataforma de Venta de Autopartes",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCwGkoxb9HPf3_UdaNydA71FgeZlVlS-tGlUjek-SzH4LlZBOE-GauVOwscGys1yH2zKecg3NAM6v598b059B-pjRRo8-4_bPTw77RozBtko751Wynd2qrnFJKwNtb8eU3gLtw50K1NMlc31d2DNl5wgNeeW94DShTAbV9QeKIH5xCB2G9JuUF8Ju-VqV52rfnUMDnGP5Ko5UA6cMj5jg5LRT8XtC3tK0WfZfN-nuXpP5fiBn8oChy-zMjUjBClmMg2FZOeFQ2214qd",
+    img: "project-repuestos.jpg",
     tags: ["Ruby on Rails", "PostgreSQL", "JavaScript", "HTML/CSS"],
     problem:
       "Marketplace multi-empresa para venta de autopartes con búsqueda pública y gestión de productos.",
@@ -62,7 +62,7 @@ const projects = [
   },
   {
     title: "Mototaxi Runner (Juego Three.js)",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBHOP6oJrdZ1V9daoaUyBpPgdIMYvUOPfygpHWct5UCRq44c23UTVin4njXHMMqWY3RDHmThVV0TSE_zj8wHp_Dwct0_UW2akfk9XKVXkj5I-8_UZR6Yl9v8ON5wj_PorDAYOBZW5DV14P1Q0-geYYJXJqy8jgh4ciMicO9FeL2kBa42IOigSt-E8aazxDOd-FLcdKEOzVz0NVjWc9wV5kQelvPDA3LpEOonj3fd5GCMDT9kFLVFWEkhGUW0eFNpFhRHsc_17UYOB32",
+    img: "project-mototaxi.jpg",
     tags: ["Three.js", "JavaScript", "WebGL", "HTML5 Canvas"],
     problem:
       "Juego 3D interactivo con detección de colisiones y mecánicas de juego fluidas en el navegador.",
@@ -73,7 +73,7 @@ const projects = [
   },
   {
     title: "Clothes-Marina (Catálogo Online)",
-    img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAb77maxTbP9_bZWn0n4Aw-7ofox8W85qVGAzrtsDe7GaP47k0w91V1_zn8XM5XOhLmTDM4vuV6tNgIH_VHWfhv76fXQ5YXMc2HuWAx3trOpU7rQJa2zx8l6Cx4ewDX1lv6R8U1x-c7Li0_-g9wNDT75R8sQFd2-kyRUgRovyKPQCW7GPHz6AnlrotlN1XE7y9TyMgAeTNsjvJVgp9ecEVU3FdraGyJaFuVRKL7Eham1VwxT032PNI5bpT6zC0zVDo-iawpMf01Dve7",
+    img: "project-clothes-marina.jpg",
     tags: ["JavaScript", "CSS", "HTML", "JSON"],
     problem:
       "Catálogo de productos digital para tienda física con navegación funcional y experiencia clara para el cliente.",
@@ -519,14 +519,15 @@ export default function App() {
                 variants={fadeIn}
                 className="card-reveal overflow-hidden flex flex-col group"
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative aspect-[16/10] min-h-[11rem] max-h-52 overflow-hidden bg-brand-surface">
                   <img
-                    src={p.img}
-                    alt={p.title}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    src={`${import.meta.env.BASE_URL}${p.img}`}
+                    alt={`Vista del proyecto: ${p.title}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-bg/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-bg/85 via-brand-bg/15 to-transparent pointer-events-none" />
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <h3 className="text-xl font-bold mb-3 leading-snug">
