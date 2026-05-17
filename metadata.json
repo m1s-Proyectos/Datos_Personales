@@ -1,0 +1,8 @@
+{
+  "name": "FJ Portfolio",
+  "description": "A high-precision technical portfolio for a Junior Web Developer featuring dark mode, project showcases, and a modern engineering aesthetic.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

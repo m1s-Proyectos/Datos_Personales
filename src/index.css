@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-bg: #0b1326;
+  --color-brand-surface: #131b2e;
+  --color-brand-surface-light: #1e293b;
+  --color-brand-primary: #57f1db;
+  --color-brand-secondary: #c0c1ff;
+  --color-brand-on-surface: #dae2fd;
+  --color-brand-on-surface-muted: #bacac5;
+  --color-brand-outline: #334155;
+
+  --spacing-section: 80px;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-brand-on-surface font-sans antialiased selection:bg-brand-primary/30 selection:text-brand-primary;
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .glass-nav {
+    @apply sticky top-0 z-50 bg-brand-bg/80 backdrop-blur-xl border-b border-brand-outline/50;
+  }
+
+  .section-container {
+    @apply max-w-7xl mx-auto px-6 py-section;
+  }
+
+  .card-reveal {
+    @apply bg-brand-surface border border-brand-outline rounded-xl transition-all duration-300 hover:border-brand-primary hover:bg-brand-surface-light;
+  }
+}
