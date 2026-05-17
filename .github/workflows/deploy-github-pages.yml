@@ -5,6 +5,8 @@ name: Deploy GitHub Pages
 on:
   push:
     branches: [main]
+  # Desde Actions → Deploy GitHub Pages → Run workflow (para redesplegar sin commit)
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -32,8 +34,9 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Build en producción para que Vite use base /Datos_Personales/
           NODE_ENV: production
+          # Misma ruta que https://m1s-proyectos.github.io/<nombre-repo>/
+          VITE_PAGES_BASE: /${{ github.event.repository.name }}/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

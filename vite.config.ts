@@ -5,8 +5,10 @@ import {defineConfig, loadEnv} from 'vite';
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
-  /** GitHub Pages: sitio en usuario.github.io/NombreRepo/ */
-  const base = mode === 'production' ? '/Datos_Personales/' : '/';
+  /** GitHub Pages: https://<org>.github.io/<repo>/ — en CI va VITE_PAGES_BASE */
+  const base =
+    process.env.VITE_PAGES_BASE ??
+    (mode === 'production' ? '/Datos_Personales/' : '/');
   return {
     base,
     plugins: [react(), tailwindcss()],
