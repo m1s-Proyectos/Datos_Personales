@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 
 const CV_URL =
-  "https://drive.google.com/file/d/1wAPuxsnOKo3SsHIL9vlyrUwzjxknYCiF/view?usp=sharing";
+  "https://drive.google.com/file/d/1ZScKlvyUzlBewr2nInjtISxWon9IwkeO/view?usp=sharing";
 const GITHUB_PROFILE = "https://github.com/m1s-Proyectos";
 
 const fadeIn = {
