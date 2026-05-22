@@ -33,6 +33,22 @@
   }
 
   .card-reveal {
-    @apply bg-brand-surface border border-brand-outline rounded-xl transition-all duration-300 hover:border-brand-primary hover:bg-brand-surface-light;
+    @apply bg-brand-surface border border-brand-outline rounded-xl shadow-sm shadow-black/20 transition-[border-color,box-shadow,background-color,transform] duration-300 hover:border-brand-primary hover:bg-brand-surface-light hover:shadow-xl hover:shadow-brand-primary/10 hover:-translate-y-0.5;
+  }
+
+  /** Transición suave de altura al expandir texto en tarjetas de proyecto */
+  .project-card-desc-window {
+    transition: max-height 0.52s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-reveal {
+      transition: none;
+      transform: none !important;
+    }
+
+    .project-card-desc-window {
+      transition: none;
+    }
   }
 }
