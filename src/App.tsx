@@ -32,7 +32,7 @@ import { clothesMarinaCaseStudySections } from "./data/clothesMarinaCaseStudy";
 import type { CaseStudySectionData } from "./data/clothesMarinaCaseStudy";
 
 const CV_URL =
-  "https://drive.google.com/file/d/1ZScKlvyUzlBewr2nInjtISxWon9IwkeO/view?usp=sharing";
+  "https://drive.google.com/file/d/1ESAnJ87i4Jc-p95vzrAE4CvpsZGYNFXP/view?usp=sharing";
 const GITHUB_PROFILE =
   "https://github.com/m1s-Proyectos?tab=repositories";
 const LINKEDIN_URL =
