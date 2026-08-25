@@ -1,4 +1,3 @@
-import type { LucideIcon } from "lucide-react";
 import {
   Database,
   Globe,
@@ -8,13 +7,7 @@ import {
   Share2,
   Shield,
 } from "lucide-react";
-
-export type CaseStudySectionData = {
-  id: string;
-  title: string;
-  Icon: LucideIcon;
-  bullets: string[];
-};
+import type { CaseStudySectionData } from "./caseStudyTypes";
 
 export const clothesMarinaCaseStudySections: CaseStudySectionData[] = [
   {

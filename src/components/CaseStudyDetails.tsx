@@ -1,5 +1,5 @@
 import { ChevronDown } from "lucide-react";
-import type { CaseStudySectionData } from "../data/clothesMarinaCaseStudy";
+import type { CaseStudySectionData } from "../data/caseStudyTypes";
 
 export function CaseStudyDetails({
   sections,

@@ -21,6 +21,11 @@ import {
   Linkedin,
   FileText,
   ChevronUp,
+  Map,
+  MapPin,
+  Clock,
+  Languages,
+  Users,
   Menu,
   X,
   ExternalLink,
@@ -28,15 +33,62 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { CaseStudyDetails } from "./components/CaseStudyDetails";
+import { busnetCaseStudySections } from "./data/busnetCaseStudy";
 import { clothesMarinaCaseStudySections } from "./data/clothesMarinaCaseStudy";
-import type { CaseStudySectionData } from "./data/clothesMarinaCaseStudy";
+import { mototaxiRunnerCaseStudySections } from "./data/mototaxiRunnerCaseStudy";
+import type { CaseStudySectionData } from "./data/caseStudyTypes";
 
 const CV_URL =
-  "https://drive.google.com/file/d/1ESAnJ87i4Jc-p95vzrAE4CvpsZGYNFXP/view?usp=sharing";
+  "https://drive.google.com/file/d/1SsNwnkNK7v6vW4-WPYESSm-eFU5e8mRC/view?usp=sharing";
 const GITHUB_PROFILE =
   "https://github.com/m1s-Proyectos?tab=repositories";
 const LINKEDIN_URL =
   "https://www.linkedin.com/in/francisco-javier-mart%C3%ADnez-quinteros-60a92632b/";
+
+const PROFESSIONAL_LANE =
+  "Desarrollador web junior · React, TypeScript y APIs · proyectos desplegados en El Salvador";
+
+const EXECUTIVE_SUMMARY = [
+  "Desarrollador web junior con proyectos desplegados en movilidad pública, e-commerce y apps full stack.",
+  "Experiencia en React, Django y bases de datos.",
+  "Busco primera oportunidad formal en equipo de producto.",
+];
+
+const portfolioMetrics = [
+  "Catálogo en producción · 49 interacciones Google en el 1.er mes",
+  "Buildathon San Salvador — demo funcional con rutas reales",
+  "Proyecto TPI — app multi-rol con chat en tiempo real",
+];
+
+const hrSignals: { icon: typeof MapPin; label: string; value: string }[] = [
+  { icon: MapPin, label: "Ubicación", value: "El Salvador" },
+  {
+    icon: Clock,
+    label: "Disponibilidad",
+    value: "Tiempo completo · remoto o híbrido",
+  },
+  {
+    icon: Languages,
+    label: "Inglés",
+    value: "Intermedio B1",
+  },
+  {
+    icon: Users,
+    label: "Colaboración",
+    value: "Git en equipo y ágil en proyectos universitarios (TPI, Buildathon)",
+  },
+];
+
+const AI_ASSISTANCE_NOTE =
+  "Uso asistencia de IA (Cursor, Codex, etc.) para acelerar desarrollo; el criterio técnico y la integración son míos.";
+
+const workExperience = [
+  {
+    date: "Freelance · cliente real",
+    company: "Clothes Marina — tienda física",
+    desc: "Levanté requerimientos desde cero, diseñé e implementé el catálogo en producción que la tienda usa hoy. En el primer mes el Perfil de Negocio en Google registró 49 interacciones (llamadas, direcciones y clics). Busco mi primera oportunidad en empresa corporativa.",
+  },
+];
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -56,7 +108,7 @@ const staggerContainer = {
 };
 
 /** Icono cuando aún no hay imagen (`public/`); por defecto base de datos. */
-type PortfolioNoImagePreset = "database" | "briefcase";
+type PortfolioNoImagePreset = "database" | "briefcase" | "map";
 
 type PortfolioProject = {
   title: string;
@@ -65,15 +117,28 @@ type PortfolioProject = {
   noImagePreset?: PortfolioNoImagePreset;
   /** Texto accesible bajo la ilustración en lugar del genérico */
   noImageSrOnly?: string;
+  /** Muestra badge de proyecto activo en desarrollo */
+  inDevelopment?: boolean;
   tags: string[];
+  /** Una frase de impacto / resultado del proyecto. */
+  impact: string;
   problem: string;
   arch: string;
   role: string;
   live?: string;
   code?: string;
+  /** Aclaración visible junto al enlace de código (p. ej. repo privado). */
+  codePrivate?: boolean;
+  /** Captura de métrica real del negocio (opcional). */
+  metricsProof?: {
+    img: string;
+    alt: string;
+    caption: string;
+  };
   /** Detalle técnico ampliable en acordeones (opcional). */
   caseStudy?: {
     sections: CaseStudySectionData[];
+    teaser?: string;
   };
 };
 
@@ -106,12 +171,28 @@ function ProjectPortfolioCard({
               className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.035]"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-bg/80 via-brand-bg/10 to-transparent" />
+            {p.inDevelopment ? (
+              <span className="absolute top-3 left-3 z-[2] rounded-md border border-amber-400/40 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-200 sm:text-[10px]">
+                En desarrollo
+              </span>
+            ) : null}
           </>
         ) : (
           <>
             <div className="absolute inset-0 bg-gradient-to-br from-brand-primary/10 via-brand-surface to-brand-bg opacity-90" />
+            {p.inDevelopment ? (
+              <span className="absolute top-3 left-3 z-[2] rounded-md border border-amber-400/40 bg-amber-500/15 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-200 sm:text-[10px]">
+                En desarrollo
+              </span>
+            ) : null}
             {p.noImagePreset === "briefcase" ? (
               <Briefcase
+                size={48}
+                className="relative z-[1] text-brand-primary/45"
+                aria-hidden
+              />
+            ) : p.noImagePreset === "map" ? (
+              <Map
                 size={48}
                 className="relative z-[1] text-brand-primary/45"
                 aria-hidden
@@ -147,86 +228,111 @@ function ProjectPortfolioCard({
         </div>
 
         <div className="relative mb-1 min-h-0 flex-1">
-          <div
-            id={contentId}
-            className={`project-card-desc-window relative overflow-hidden ${
-              isExpanded
-                ? "max-h-[min(4000px,200vh)]"
-                : "max-h-[11.25rem] sm:max-h-[12.25rem] md:max-h-[13rem]"
-            }`}
-          >
-            <div className="space-y-2.5 text-[13px] leading-relaxed text-brand-on-surface-muted md:space-y-3 md:text-sm">
-              {p.caseStudy ? (
-                <>
-                  <p>
-                    <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
-                      Alcance
-                    </span>
-                    <span className="text-brand-on-surface-muted/95">{p.problem}</span>
-                  </p>
-                  {isExpanded ? (
-                    <>
-                      <p>
-                        <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
-                          Arquitectura
-                        </span>
-                        <span className="text-brand-on-surface-muted/95">{p.arch}</span>
-                      </p>
-                      <p>
-                        <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
-                          Rol
-                        </span>
-                        <span className="text-brand-on-surface-muted/95">{p.role}</span>
-                      </p>
-                      <CaseStudyDetails
-                        sections={p.caseStudy.sections}
-                        labelledBy={`${contentId}-cs-head`}
-                      />
-                    </>
-                  ) : (
-                    <p className="pt-1 text-[11px] italic text-brand-on-surface-muted/80 md:text-[12px]">
-                      Pulsa «Ver toda la información» para revisar seguridad administrativa, Supabase, SEO técnico y flujos de conversión integrados en la misma plataforma.
-                    </p>
-                  )}
-                </>
-              ) : (
-                <>
-                  <p>
-                    <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
-                      Problema resuelto
-                    </span>
-                    <span className="text-brand-on-surface-muted/95">{p.problem}</span>
-                  </p>
-                  <p>
-                    <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
-                      Arquitectura
-                    </span>
-                    <span className="text-brand-on-surface-muted/95">{p.arch}</span>
-                  </p>
-                  <p>
-                    <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
-                      Rol
-                    </span>
-                    <span className="text-brand-on-surface-muted/95">{p.role}</span>
-                  </p>
-                </>
-              )}
-            </div>
+          <div className="space-y-2.5 text-[13px] leading-relaxed text-brand-on-surface-muted md:space-y-3 md:text-sm">
+            <p>
+              <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
+                Impacto
+              </span>
+              <span className="text-brand-on-surface-muted/95">{p.impact}</span>
+            </p>
+            <p>
+              <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
+                Mi rol
+              </span>
+              <span className="text-brand-on-surface-muted/95">{p.role}</span>
+            </p>
+            {p.metricsProof ? (
+              <figure className="overflow-hidden rounded-lg border border-brand-outline/40 bg-brand-bg/30">
+                <img
+                  src={`${import.meta.env.BASE_URL}${p.metricsProof.img}`}
+                  alt={p.metricsProof.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full object-cover object-top"
+                />
+                <figcaption className="px-3 py-2 text-[11px] leading-snug text-brand-on-surface-muted/90 sm:text-[12px]">
+                  {p.metricsProof.caption}
+                </figcaption>
+              </figure>
+            ) : null}
           </div>
 
-          <AnimatePresence initial={false}>
-            {!isExpanded ? (
-              <motion.div
-                key={`fade-tip-${contentId}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-t from-brand-surface via-brand-surface/88 to-transparent"
-                aria-hidden
-              />
-            ) : null}
-          </AnimatePresence>
+          <div className="relative mt-3">
+            <div
+              id={contentId}
+              className={`project-card-desc-window relative overflow-hidden ${
+                isExpanded
+                  ? "max-h-[min(4000px,200vh)]"
+                  : "max-h-[4.5rem] sm:max-h-[5rem]"
+              }`}
+            >
+              <div className="space-y-2.5 text-[13px] leading-relaxed text-brand-on-surface-muted md:space-y-3 md:text-sm">
+                {p.caseStudy ? (
+                  <>
+                    {isExpanded ? (
+                      <>
+                        <p>
+                          <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
+                            Alcance
+                          </span>
+                          <span className="text-brand-on-surface-muted/95">{p.problem}</span>
+                        </p>
+                        <p>
+                          <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
+                            Arquitectura
+                          </span>
+                          <span className="text-brand-on-surface-muted/95">{p.arch}</span>
+                        </p>
+                        <CaseStudyDetails
+                          sections={p.caseStudy.sections}
+                          labelledBy={`${contentId}-cs-head`}
+                        />
+                      </>
+                    ) : (
+                      <p className="pt-1 text-[11px] italic text-brand-on-surface-muted/80 md:text-[12px]">
+                        {p.caseStudy.teaser ??
+                          "Pulsa «Ver toda la información» para revisar el alcance técnico detallado del proyecto."}
+                      </p>
+                    )}
+                  </>
+                ) : isExpanded ? (
+                  <>
+                    <p>
+                      <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
+                        Alcance
+                      </span>
+                      <span className="text-brand-on-surface-muted/95">{p.problem}</span>
+                    </p>
+                    <p>
+                      <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
+                        Arquitectura
+                      </span>
+                      <span className="text-brand-on-surface-muted/95">{p.arch}</span>
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-[11px] italic text-brand-on-surface-muted/80 md:text-[12px]">
+                    Pulsa «Ver toda la información» para revisar alcance y
+                    arquitectura.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <AnimatePresence initial={false}>
+              {!isExpanded ? (
+                <motion.div
+                  key={`fade-tip-${contentId}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-10 bg-gradient-to-t from-brand-surface via-brand-surface/88 to-transparent"
+                  aria-hidden
+                />
+              ) : null}
+            </AnimatePresence>
+          </div>
         </div>
 
         <div className="mt-auto flex shrink-0 flex-col gap-3 border-t border-brand-outline/35 pt-4">
@@ -262,15 +368,23 @@ function ProjectPortfolioCard({
               </a>
             ) : null}
             {p.code ? (
-              <a
-                href={p.code}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-[44px] flex-1 min-w-0 items-center justify-center gap-2 rounded-lg border-2 border-brand-primary/65 bg-brand-primary/[0.08] px-4 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-brand-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:border-brand-primary hover:bg-brand-primary/18 hover:shadow-[0_8px_24px_-12px_rgba(87,241,219,0.35)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-surface"
-              >
-                Ver código
-                <Code2 size={16} className="shrink-0 opacity-95" aria-hidden />
-              </a>
+              <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                <a
+                  href={p.code}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-[44px] w-full flex-1 min-w-0 items-center justify-center gap-2 rounded-lg border-2 border-brand-primary/65 bg-brand-primary/[0.08] px-4 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-brand-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:border-brand-primary hover:bg-brand-primary/18 hover:shadow-[0_8px_24px_-12px_rgba(87,241,219,0.35)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-surface"
+                >
+                  Ver código
+                  <Code2 size={16} className="shrink-0 opacity-95" aria-hidden />
+                </a>
+                {p.codePrivate ? (
+                  <p className="text-[10px] italic leading-snug text-brand-on-surface-muted/90 sm:text-[11px]">
+                    Repositorio privado (rama Frank) — el enlace solo abre con acceso
+                    concedido por el equipo del proyecto.
+                  </p>
+                ) : null}
+              </div>
             ) : null}
             {!p.live && !p.code ? (
               <p className="flex min-h-[44px] flex-1 items-center text-xs italic leading-relaxed text-brand-on-surface-muted">
@@ -286,49 +400,37 @@ function ProjectPortfolioCard({
 
 const projects: PortfolioProject[] = [
   {
-    title: "Plataforma de Venta de Autopartes",
-    img: "project-repuestos.jpg",
-    tags: ["Next.js", "PostgreSQL", "JavaScript", "React", "HTML/CSS"],
-    problem:
-      "Marketplace multi-empresa para venta de autopartes con búsqueda pública y gestión de productos.",
-    arch:
-      "Hoy la aplicación cuenta con una base sólida en frontend (interfaz, flujo de navegación y experiencia públicos). Planeo complementar esa capa con backend en Next.js (rutas API / servidor en el mismo proyecto) más una API REST que todavía está en proceso; objetivos posteriores: inventarios grandes, consultas ordenadas y búsqueda pública robusta cuando la parte servidor quede estable.",
-    role:
-      "Desarrollo frontend publicado en curso normal; trabajo activo incorporando servidor con Next y la API relacionada —avance paralelo similar al estado de la API hasta cerrar full stack.",
-    live: "https://v0-fast-repuestos-hub.vercel.app/",
-    code: "https://github.com/m1s-Proyectos/v0-fast-repuestos-hub",
-  },
-  {
-    title: "LaburoSV — Bolsa de trabajo · Proyecto TPI",
-    img: "project-laburosv.jpg",
+    title: "BusNET — Movilidad & transporte público (SV)",
+    img: "project-busnet.jpg",
+    inDevelopment: true,
     tags: [
-      "Django",
+      "React",
+      "Vite",
+      "MapLibre GL",
+      "Node.js",
+      "Express",
+      "Rust",
+      "Axum",
+      "Turf.js",
+      "GeoJSON",
       "PostgreSQL",
-      "Django Channels",
-      "WebSockets",
-      "django-allauth",
-      "Cloudinary",
-      "Render",
-      "Redis",
     ],
+    impact:
+      "Buildathon San Salvador — demo funcional con rutas reales; planner de buses desplegado con mapa, búsqueda y tráfico comunitario.",
     problem:
-      "Bolsa de empleo orientada a El Salvador: registro por roles (administrador, empresa y candidato), verificación por correo, alta de empresas con SolicitudEmpresa (pendiente / aprobada / rechazada) y enlaces UUID, perfiles muy completos adaptados al país (departamentos y municipios, CV y medios), ofertas publicadas con favoritos, postulaciones con estados y reseñas entre usuarios.",
+      "Plataforma de movilidad para el transporte público de El Salvador: indicás origen y destino y el sistema arma el viaje (qué bus, transbordos, caminata, tiempo y costo). Proyecto en desarrollo activo con el equipo del Cursor Buildathon San Salvador — lo desplegado ya cubre planner, mapa, búsqueda y tráfico comunitario.",
     arch:
-      "Monorepo Django multi-app (`usuarios`, `perfiles`, `ofertas`, `postulaciones`, `mensajeria`, `adminpanel`): modelos tipo Usuario extendido (AbstractUser), PerfilCandidato y PerfilEmpresa con medios en Cloudinary, Postulacion con unicidad por par candidato–oferta y señales que crean chat grupal/notificaciones. Mensajeria con Channels y WebSocket (`ChatConsumer`), Redis opcional o capa en memoria si no hay broker. Producción configurada para Render, PostgreSQL, login social Google vía django-allauth; admin Django montado en ruta secreta más panel interno propio para aprobar solicitudes de empresa y moderar usuarios.",
+      "Monorepo cliente–servidor: frontend React + Vite + MapLibre GL (mobile-first); API Node (Express + Turf.js) como motor original intocable; API Rust (Axum, rusty_busnet) como port del mismo contrato con ~990 GeoJSON; rutas canónicas en GeoJSON y Postgres opcional (Supabase) para lugares; tokens del design-system/ sin hex sueltos en UI.",
     role:
-      "Desarrollo colaborativo TPI usando Git día a día a nivel de equipo —ramas, integración entre compañeros y revisión antes de fusión— dentro de un proyecto de las apps más grandes del ciclo.",
-    code: "https://github.com/CristianJaeger1705/Proyecto-TPI/tree/rama-de-prueba1",
-  },
-  {
-    title: "Mototaxi Runner (Juego Three.js)",
-    img: "project-mototaxi.jpg",
-    tags: ["Three.js", "JavaScript", "WebGL", "HTML5 Canvas"],
-    problem:
-      "Juego 3D interactivo con detección de colisiones y mecánicas de juego fluidas en el navegador.",
-    arch: "Motor de gráficos 3D con simulación de física, detección de colisiones y gestión de estado del juego.",
-    role: "Desarrollo completo",
-    live: "https://moto-taxi-runner.vercel.app/",
-    code: "https://github.com/m1s-Proyectos/Moto_Taxi_Runner",
+      "En equipo de 4 del Cursor Buildathon San Salvador: implementé el módulo de rastreo e inserción de rutas en la API y el módulo para agregar reportes comunitarios; trabajé en planner y UI en mis partes asignadas. En diseño sigo mejorando rutas, alineándolas a trazados reales, y avanzo la parte de notificaciones y mensajes push.",
+    live: "https://busnet-sv.vercel.app/",
+    code: "https://github.com/aedneth/busnet-final/tree/Frank",
+    codePrivate: true,
+    caseStudy: {
+      teaser:
+        "Pulsa «Ver toda la información» para revisar el problema de movilidad, arquitectura Node/Rust, flujo del planner geométrico y qué está desplegado vs. roadmap.",
+      sections: busnetCaseStudySections,
+    },
   },
   {
     title: "Clothes Marina — Catálogo comercial integral",
@@ -344,34 +446,115 @@ const projects: PortfolioProject[] = [
       "OAuth GitHub",
       "Vercel",
     ],
+    impact:
+      "Catálogo en producción con tracción real: 49 interacciones en el Perfil de Negocio de Google en el primer mes (llamadas, direcciones y clics al sitio).",
     problem:
       "Plataforma lista para producción que conecta el escaparate digital con operaciones reales: clientes exploran colecciones sincronizadas con la base de datos mientras Marina controla contenido, seguridad y nuevos contactos en un solo lugar.",
     arch:
       "SPA en React con vistas públicas contextualizadas más un panel administrativo protegido; Supabase concentra Postgres, buckets de medios, políticas row-level y OAuth (correo/GitHub) según el caso de uso.",
     role:
-      "Diseño e implementación desde la experiencia shopper hasta analítica de interés, seguridad basada en roles, SEO técnico y embudos hacia WhatsApp para cerrar ventas en tienda física.",
+      "Proyecto ideado y construido por mí solo —desde el relevamiento del negocio hasta el despliegue— incorporando panel admin, Supabase, SEO y WhatsApp para que el catálogo fuera usable en la operación real.",
     live: "https://clothes-marina.vercel.app/",
     code: "https://github.com/m1s-Proyectos/clothes-marina",
+    metricsProof: {
+      img: "project-clothes-marina-metrics.png",
+      alt: "Gráfico de rendimiento de Google: 49 interacciones del Perfil de Negocio de Clothes Marina en julio de 2026",
+      caption:
+        "Rendimiento del Perfil de Negocio en Google (jul 2026): los clientes empiezan a interactuar en el primer mes — llamadas, reservas, direcciones y clics al sitio web.",
+    },
     caseStudy: {
+      teaser:
+        "Pulsa «Ver toda la información» para revisar seguridad administrativa, Supabase, SEO técnico y flujos de conversión integrados en la misma plataforma.",
       sections: clothesMarinaCaseStudySections,
     },
   },
   {
+    title: "LaburoSV — Bolsa de trabajo · Proyecto TPI",
+    img: "project-laburosv.jpg",
+    tags: [
+      "Django",
+      "PostgreSQL",
+      "Django Channels",
+      "WebSockets",
+      "django-allauth",
+      "Cloudinary",
+      "Render",
+      "Redis",
+    ],
+    impact:
+      "Proyecto TPI — app multi-rol con chat en tiempo real; bolsa de empleo para El Salvador con registro por roles y flujos de postulación.",
+    problem:
+      "Bolsa de empleo orientada a El Salvador: registro por roles (administrador, empresa y candidato), verificación por correo, alta de empresas con SolicitudEmpresa (pendiente / aprobada / rechazada) y enlaces UUID, perfiles muy completos adaptados al país (departamentos y municipios, CV y medios), ofertas publicadas con favoritos, postulaciones con estados y reseñas entre usuarios.",
+    arch:
+      "Monorepo Django multi-app (`usuarios`, `perfiles`, `ofertas`, `postulaciones`, `mensajeria`, `adminpanel`): modelos tipo Usuario extendido (AbstractUser), PerfilCandidato y PerfilEmpresa con medios en Cloudinary, Postulacion con unicidad por par candidato–oferta y señales que crean chat grupal/notificaciones. Mensajeria con Channels y WebSocket (`ChatConsumer`), Redis opcional o capa en memoria si no hay broker. Producción configurada para Render, PostgreSQL, login social Google vía django-allauth; admin Django montado en ruta secreta más panel interno propio para aprobar solicitudes de empresa y moderar usuarios.",
+    role:
+      "En equipo de 5 del TPI, desarrollé el módulo de chat y mensajería con variaciones por rol —más complejidad en permisos y flujos— y quedó finalizado con éxito.",
+    code: "https://github.com/CristianJaeger1705/Proyecto-TPI/tree/Frank",
+    codePrivate: true,
+  },
+  {
+    title: "Plataforma de Venta de Autopartes (e-commerce)",
+    img: "project-repuestos.jpg",
+    tags: ["Next.js", "React", "JavaScript", "HTML/CSS", "Solo frontend"],
+    impact:
+      "Marketplace de autopartes con interfaz pública desplegada: navegación y búsqueda visual — sin backend ni persistencia de datos en producción todavía.",
+    problem:
+      "Marketplace multi-empresa para venta de autopartes; hoy la demo en línea muestra solo la capa frontend (UI y flujos navegables), sin funcionalidad de servidor, API ni base de datos activa.",
+    arch:
+      "Frontend publicado en Next.js/React (interfaz, rutas y experiencia pública). Backend, API REST y PostgreSQL están planeados e en desarrollo — aún no forman parte del despliegue actual.",
+    role:
+      "Proyecto creado por mí solo: ideé y desplegué únicamente el frontend; la capa servidor con Next.js y API REST sigue pendiente para cerrar full stack.",
+    live: "https://v0-fast-repuestos-hub.vercel.app/",
+    code: "https://github.com/m1s-Proyectos/v0-fast-repuestos-hub",
+  },
+  {
+    title: "Mototaxi Runner (Juego Three.js)",
+    img: "project-mototaxi.jpg",
+    tags: [
+      "TypeScript",
+      "Vite",
+      "Three.js",
+      "Tailwind CSS",
+      "GSAP",
+      "Howler",
+      "Supabase",
+      "WebGL",
+    ],
+    impact:
+      "Juego 3D arcade desplegado con demo jugable, progresión en garaje y multijugador — producto completo en el navegador.",
+    problem:
+      "Juego web arcade de mototaxi: llevas pasajeros por una ciudad nocturna (Pupy → Papá → Casa), recoges monedas y turbos, mejoras la moto en un taller local y compites en solitario o multijugador.",
+    arch:
+      "SPA TypeScript + Vite con render 3D en Three.js; capas `src/game/` (motor, física arcade, input, audio), `src/ui/` (splash, HUD, garaje, minimapa), `src/lib/` (cartera, upgrades, salas, Supabase) y `src/track/` (ruta, checkpoints, obstáculos). UI con Tailwind CSS 4 y GSAP; audio con Howler; persistencia local (localStorage) y multijugador vía Supabase Realtime + Postgres.",
+    role:
+      "Ideado y desarrollado íntegramente por mí: motor Three.js, loop de juego, UI, garaje, multijugador y despliegue.",
+    live: "https://moto-taxi-runner.vercel.app/",
+    code: "https://github.com/m1s-Proyectos/Moto_Taxi_Runner",
+    caseStudy: {
+      teaser:
+        "Pulsa «Ver toda la información» para revisar modos de juego, gameplay arcade, garaje, multijugador 1v1 y stack técnico (Three.js, GSAP, Howler, Supabase).",
+      sections: mototaxiRunnerCaseStudySections,
+    },
+  },
+  {
     title: "Sistema de gestión de biblioteca (DB Engineering)",
-    /* Descomenta cuando agregues public/project-biblioteca.jpg — img: "project-biblioteca.jpg", */
-    noImageSrOnly:
-      "Vista del proyecto sin captura (MySQL, procedimientos y aplicación Java).",
+    img: "project-biblioteca.png",
     tags: [
       "MySQL Workbench",
       "MySQL",
       "Java",
+      "Java Swing",
       "Apache NetBeans",
       "Modelado ER",
     ],
+    impact:
+      "Sistema de biblioteca FIA UES modelado e implementado con reglas de negocio en MySQL y cliente de escritorio funcional.",
     problem:
-      "Diseño e implementación de un sistema para administrar biblioteca con datos consistentes, reglas de negocio en el motor y automatización donde corresponda.",
-    arch: "Modelado relacional desde cero en MySQL Workbench: normalización e integridad referencial. Lógica avanzada con stored procedures, funciones, triggers, vistas y cursores; base integrada desde una aplicación Java (Apache NetBeans) para operaciones CRUD y validaciones.",
-    role: "Modelado de base de datos, SQL avanzado e integración con aplicación cliente",
+      "Diseño e implementación de un sistema para administrar la biblioteca universitaria FIA UES con datos consistentes, reglas de negocio en el motor y automatización donde corresponda.",
+    arch:
+      "Modelado relacional desde cero en MySQL Workbench: normalización e integridad referencial. Lógica avanzada con stored procedures, funciones, triggers, vistas y cursores; base consumida desde una aplicación de escritorio Java con interfaz gráfica tipo Windows Forms (Java Swing en Apache NetBeans): pestañas para vistas, procedimientos, funciones, cursores y mantenimiento.",
+    role:
+      "Proyecto propio de principio a fin: modelado ER, SQL avanzado (SP, triggers, cursores) e integración con la app Java Swing.",
     code: "https://github.com/m1s-Proyectos/Proyecto_Biblioteca",
   },
 ];
@@ -381,41 +564,29 @@ const skillCategories = [
     icon: Globe,
     title: "Frontend",
     skills: [
-      "JavaScript",
       "React",
-      "TanStack Query",
+      "TypeScript",
+      "JavaScript",
       "HTML5",
       "CSS3",
-      "Three.js",
-      "TypeScript",
+      "Vite",
     ],
   },
   {
     icon: Cpu,
     title: "Backend",
     skills: [
-      "Ruby on Rails",
       "Node.js",
-      "Java",
-      "Spring Boot (básico)",
+      "Express",
       "Python",
       "Django",
-      "Django Channels",
-      "GraphQL",
-      "REST APIs",
+      "REST APIs (básico)",
     ],
   },
   {
     icon: Database,
     title: "Bases de datos",
-    skills: [
-      "PostgreSQL",
-      "Oracle",
-      "SQL Server",
-      "MySQL",
-      "SP / triggers / vistas (MySQL)",
-      "Redis",
-    ],
+    skills: ["PostgreSQL", "MySQL", "SP / triggers / vistas (MySQL)"],
   },
   {
     icon: Wrench,
@@ -423,33 +594,56 @@ const skillCategories = [
     skills: [
       "Git",
       "GitHub",
-      "Docker",
-      "Apache HTTP (básico)",
-      "Nginx (básico)",
-      "IIS (básico)",
       "Vercel",
       "VS Code",
       "IntelliJ IDEA",
-      "Apache NetBeans",
-      "Cursor AI",
-      "V0",
-      "Windsurf AI",
       "Postman",
+      "Supabase",
+      "Google Drive",
+      "Azure (básico)",
     ],
   },
 ];
 
+const familiaritySkills = [
+  "TanStack Query",
+  "MapLibre GL",
+  "Three.js",
+  "Rust (exposición en proyecto)",
+  "Java",
+  "Java Swing",
+  "JavaFX (básico)",
+  "Spring Boot (básico)",
+  "Django Channels",
+  "WebSockets",
+  "JSON (archivos)",
+  "Oracle",
+  "SQL Server",
+  "Redis",
+  "MySQL Workbench",
+  "Docker",
+  "Apache HTTP (básico)",
+  "Nginx (básico)",
+  "IIS (básico)",
+  "SQL Developer",
+  "Apache NetBeans",
+];
+
+const currentLearning = {
+  title: "Aprendizaje actual",
+  body: "Practico consumo y diseño de APIs con TanStack Query en React mientras armo una API propia como laboratorio — cliente, servidor y estados asíncronos, paso a paso, aparte de mis proyectos en producción.",
+};
+
 const experienceIntro = [
-  "Mi trabajo visible hoy está en proyectos como Fast Repuestos (Rails), LaburoSV (bolsa para El Salvador desarrollada en equipo con Django, PostgreSQL y mensajeria en tiempo real), Clothes-Marina y Mototaxi Runner. Muchos tienen código y demo públicos.",
-  "También desarrollé un proyecto de ingeniería de bases de datos: sistema de gestión de biblioteca modelado desde cero en MySQL Workbench (normalización, integridad referencial) con stored procedures, funciones, triggers, vistas y cursores; la base quedó consumida desde una aplicación Java con Apache NetBeans para operaciones, automatización y reglas de negocio desde el escritorio.",
-  "Estoy aprendiendo a trabajar con APIs usando TanStack Query en el frontend mientras desarrollo una API propia: me interesa dominar cliente, servidor y estados asíncronos con algo que voy construyendo paso a paso.",
+  "Hoy destaco BusNET (movilidad pública en El Salvador, en desarrollo con el equipo del Buildathon) y Clothes Marina (catálogo comercial en producción con React y Supabase). Ambos tienen demo pública.",
+  "También participé en LaburoSV (bolsa TPI con Django, PostgreSQL y mensajería en tiempo real), Fast Repuestos, Mototaxi Runner y un sistema de biblioteca modelado en MySQL Workbench con interfaz Java Swing.",
 ];
 
 const experienceTimeline = [
   {
     date: "2023 — Presente",
-    company: "Proyectos portfolio y práctica con APIs",
-    desc: "Desarrollo y despliegue de proyectos públicos y colaborativos (autopartes, LaburoSV, catálogo, juego); modelado MySQL avanzado con Java/NetBeans (biblioteca) y práctica consumiendo APIs con TanStack Query sobre una API en construcción.",
+    company: "Proyectos portfolio y productos desplegados",
+    desc: "BusNET (Buildathon, equipo activo): planner de buses sobre GeoJSON locales. Clothes Marina en producción. Además: LaburoSV, autopartes, Mototaxi Runner y biblioteca MySQL/Java.",
   },
   {
     date: "2022 — 2023",
@@ -471,17 +665,17 @@ const aboutHighlights: {
   {
     icon: Terminal,
     title: "Tecnologías principales",
-    body: "Backend con Python, JavaScript, React, Ruby on Rails, PostgreSQL, Oracle, SQL Server, MySQL Workbench y modelado ER con triggers, vistas y SPs en proyectos prácticos. Experiencia básica con Java + Spring Boot en un proyecto pequeño ya entregado. Conocimiento introductorio de servidores web: Apache, Nginx e IIS.",
+    body: "React, TypeScript, Django, Node.js y PostgreSQL en proyectos desplegados. Modelado ER con MySQL Workbench (triggers, vistas y SPs). Java + Spring Boot en un proyecto pequeño entregado.",
+  },
+  {
+    icon: Map,
+    title: "BusNET",
+    body: "Planner de movilidad pública sobre rutas reales en El Salvador — mapa, búsqueda y tráfico comunitario desplegados; en evolución con el equipo del Buildathon.",
   },
   {
     icon: Briefcase,
-    title: "LABURO SV",
-    body: "Bolsa de trabajo inclusiva para empresas y trabajadores freelance.",
-  },
-  {
-    icon: Zap,
-    title: "Enfoque actual",
-    body: "Practicar consumo de APIs con TanStack Query y terminar mi API de práctica junto al frontend que la consume.",
+    title: "Clothes Marina",
+    body: "Catálogo comercial en producción: escaparate React + Supabase, panel admin, SEO y embudo hacia WhatsApp para la tienda física.",
   },
 ];
 
@@ -598,17 +792,17 @@ export default function App() {
                 />
               </motion.div>
 
-              <motion.span
+              <motion.p
                 initial="hidden"
                 animate="visible"
                 variants={fadeIn}
-                className="text-sm font-bold tracking-widest text-brand-primary uppercase block text-center"
+                className="text-sm md:text-base font-bold tracking-wide text-brand-primary text-center max-w-2xl mx-auto leading-snug"
               >
-                Desarrollador web junior
-              </motion.span>
+                {PROFESSIONAL_LANE}
+              </motion.p>
             </div>
 
-            <div className="text-center space-y-5 mb-10">
+            <div className="text-center space-y-5 mb-8">
               <motion.h1
                 initial="hidden"
                 whileInView="visible"
@@ -619,42 +813,72 @@ export default function App() {
                 Francisco Martínez
               </motion.h1>
 
-                <motion.p
+              <motion.div
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeIn}
-                className="text-lg md:text-xl text-brand-on-surface font-medium leading-snug max-w-2xl mx-auto"
+                className="mx-auto max-w-2xl space-y-2 rounded-xl border border-brand-primary/25 bg-brand-primary/[0.06] px-5 py-4 text-left sm:px-6 sm:py-5"
               >
-                Proyectos recientes como{" "}
-                <span className="text-brand-primary">
-                  Fast Repuestos, Clothes-Marina y Mototaxi Runner
-                </span>
-                : marketplace de autopartes, catálogo en línea para tienda física
-                y juego 3D en el navegador.
-              </motion.p>
+                {EXECUTIVE_SUMMARY.map((line, idx) => (
+                  <p
+                    key={idx}
+                    className={`leading-relaxed ${
+                      idx === EXECUTIVE_SUMMARY.length - 1
+                        ? "text-brand-primary font-semibold text-[15px] md:text-base"
+                        : "text-brand-on-surface text-[15px] md:text-base"
+                    }`}
+                  >
+                    {line}
+                  </p>
+                ))}
+              </motion.div>
 
-              <motion.p
+              <motion.ul
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeIn}
-                className="text-base md:text-[17px] text-brand-on-surface-muted max-w-xl mx-auto leading-relaxed"
+                className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto"
               >
-                Sigo puliendo{" "}
-                <span className="text-brand-on-surface">
-                  JavaScript, React y Ruby on Rails
-                </span>
-                . Ahora estoy{" "}
-                <span className="text-brand-on-surface font-medium">
-                  aprendiendo a integrar datos con TanStack Query
-                </span>{" "}
-                contra una{" "}
-                <span className="text-brand-on-surface font-medium">
-                  API en desarrollo que estoy montando yo mismo
-                </span>
-                , para práctica de punta a punta.
-              </motion.p>
+                {portfolioMetrics.map((metric) => (
+                  <li
+                    key={metric}
+                    className="rounded-full border border-brand-outline/50 bg-brand-surface/80 px-3 py-1 text-[11px] font-medium text-brand-on-surface-muted sm:text-xs"
+                  >
+                    {metric}
+                  </li>
+                ))}
+              </motion.ul>
+
+              <motion.dl
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeIn}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto text-left"
+              >
+                {hrSignals.map(({ icon: Icon, label, value }) => (
+                  <div
+                    key={label}
+                    className="flex gap-2.5 rounded-lg border border-brand-outline/35 bg-brand-surface/40 px-3 py-2.5"
+                  >
+                    <Icon
+                      size={16}
+                      className="shrink-0 text-brand-primary mt-0.5"
+                      aria-hidden
+                    />
+                    <div className="min-w-0">
+                      <dt className="text-[10px] font-bold uppercase tracking-wider text-brand-primary/90">
+                        {label}
+                      </dt>
+                      <dd className="text-[12px] leading-snug text-brand-on-surface-muted sm:text-[13px]">
+                        {value}
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+              </motion.dl>
             </div>
 
             <motion.div
@@ -710,11 +934,18 @@ export default function App() {
                   Introducción
                 </h3>
                 <p className="text-brand-on-surface-muted leading-relaxed">
-                  Soy un desarrollador web enfocado en proyectos prácticos que se
-                  ven en código y en demo: autopartes, catálogo para negocio
-                  local y experimentos como un juego 3D en el navegador. También
-                  estoy desarrollando una API propia para practicar con TanStack
-                  Query en el cliente.
+                  Desarrollador web junior con foco en productos desplegados.
+                  Lo más reciente:{" "}
+                  <span className="text-brand-on-surface font-medium">
+                    BusNET
+                  </span>{" "}
+                  (movilidad pública, Buildathon) y{" "}
+                  <span className="text-brand-on-surface font-medium">
+                    Clothes Marina
+                  </span>{" "}
+                  (catálogo + panel admin en Supabase). LaburoSV, autopartes,
+                  Mototaxi Runner y biblioteca completan el portfolio con
+                  trabajo en equipo, frontend y datos.
                 </p>
               </motion.div>
 
@@ -730,7 +961,7 @@ export default function App() {
                     Experiencia técnica
                   </h3>
                   <p className="text-brand-on-surface-muted leading-relaxed">
-                    Trabajo sobre todo con JavaScript y Ruby on Rails para
+                    Trabajo sobre todo con JavaScript y React para
                     interfaces claras y pantallas donde el usuario encuentra lo
                     que busca. Priorizo código legible y estructuras que pueda
                     mantener cuando el proyecto crece.
@@ -745,14 +976,39 @@ export default function App() {
                   className="bg-brand-surface p-8 rounded-xl border border-brand-outline/50"
                 >
                   <h3 className="text-xl font-semibold text-brand-primary mb-4">
-                    Enfoque actual
+                    Proyectos destacados
                   </h3>
                   <p className="text-brand-on-surface-muted leading-relaxed">
-                    Consolidar llamadas HTTP tipadas desde React con TanStack
-                    Query, terminar la API que las alimenta y seguir mejorando esos tres proyectos con feedback real.
+                    <span className="text-brand-on-surface font-medium">
+                      BusNET
+                    </span>{" "}
+                    concentra mapa, planner y tráfico comunitario sobre GeoJSON
+                    locales;{" "}
+                    <span className="text-brand-on-surface font-medium">
+                      Clothes Marina
+                    </span>{" "}
+                    conecta escaparate digital con operaciones reales del
+                    negocio. Son los proyectos que mejor muestran mi lane
+                    actual.
                   </p>
                 </motion.div>
               </div>
+
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeIn}
+                className="bg-brand-bg/40 p-8 rounded-xl border border-brand-outline/40 border-dashed"
+              >
+                <h3 className="text-xl font-semibold text-brand-primary mb-4 flex items-center gap-2">
+                  <Zap size={20} aria-hidden />
+                  {currentLearning.title}
+                </h3>
+                <p className="text-brand-on-surface-muted leading-relaxed">
+                  {currentLearning.body}
+                </p>
+              </motion.div>
             </div>
 
             <aside className="lg:col-span-4">
@@ -875,8 +1131,8 @@ export default function App() {
             variants={fadeIn}
             className="text-center text-brand-on-surface-muted max-w-2xl mx-auto mb-16 leading-relaxed"
           >
-            Stack alineado a proyectos reales: frontend, backend, datos y
-            herramientas de entrega.
+            Núcleo alineado a proyectos en producción; el resto en familiaridad
+            por exposición en TPI, biblioteca o side projects.
           </motion.p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -908,6 +1164,38 @@ export default function App() {
               </motion.div>
             ))}
           </div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="mt-14 mx-auto max-w-4xl rounded-xl border border-brand-outline/35 bg-brand-surface/40 p-6 sm:p-8"
+          >
+            <div className="mb-4 flex items-center gap-3 text-brand-on-surface-muted">
+              <Sparkles size={20} className="shrink-0 text-brand-primary/80" />
+              <h3 className="text-lg font-bold tracking-tight text-brand-on-surface">
+                Familiaridad
+              </h3>
+            </div>
+            <p className="mb-5 text-sm leading-relaxed text-brand-on-surface-muted">
+              Tecnologías con las que he trabajado en menor medida, en equipo o
+              en proyectos académicos — no son el foco principal del portfolio.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {familiaritySkills.map((s) => (
+                <span
+                  key={s}
+                  className="cursor-default whitespace-nowrap rounded-lg border border-brand-outline/35 bg-brand-bg/40 px-3 py-1.5 text-sm text-brand-on-surface-muted transition-colors hover:border-brand-outline/60"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+            <p className="mt-6 border-t border-brand-outline/30 pt-5 text-sm leading-relaxed text-brand-on-surface-muted italic">
+              {AI_ASSISTANCE_NOTE}
+            </p>
+          </motion.div>
         </div>
       </section>
 
@@ -938,10 +1226,81 @@ export default function App() {
                 {para}
               </p>
             ))}
-            <p className="text-brand-primary font-semibold border-l-2 border-brand-primary/40 pl-4">
-              Ahora mismo profundizo en cliente + API con TanStack Query sobre
-              un backend que voy armando yo, además de iterar sobre mis
-              proyectos públicos.
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="mb-12"
+          >
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-3">
+              <Briefcase size={22} className="text-brand-primary" />
+              Experiencia laboral / prácticas / freelance
+            </h3>
+            <p className="text-brand-on-surface-muted mb-6 max-w-3xl leading-relaxed">
+              No tengo aún experiencia corporativa formal; busco mi primera
+              oportunidad en empresa. Mi trabajo más cercano a un cliente real
+              es el siguiente:
+            </p>
+            <div className="space-y-4">
+              {workExperience.map((exp) => (
+                <div
+                  key={exp.company}
+                  className="bg-brand-surface p-8 rounded-xl border border-brand-primary/20 flex flex-col md:flex-row gap-8"
+                >
+                  <div className="md:w-1/4">
+                    <span className="text-brand-primary font-bold text-sm tracking-wide">
+                      {exp.date}
+                    </span>
+                    <h4 className="text-xl font-bold mt-1 tracking-tight">
+                      {exp.company}
+                    </h4>
+                  </div>
+                  <div className="md:w-3/4">
+                    <p className="text-brand-on-surface-muted leading-relaxed">
+                      {exp.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="mb-12"
+          >
+            <h3 className="text-xl font-bold mb-4">Resultados en contexto</h3>
+            <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {portfolioMetrics.map((metric) => (
+                <li
+                  key={metric}
+                  className="rounded-xl border border-brand-outline/35 bg-brand-surface/50 px-4 py-3 text-sm leading-relaxed text-brand-on-surface-muted"
+                >
+                  {metric}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="mb-12 max-w-4xl rounded-xl border border-dashed border-brand-outline/45 bg-brand-surface/35 p-6 sm:p-8"
+          >
+            <div className="mb-3 flex items-center gap-2 text-brand-primary">
+              <Zap size={20} aria-hidden />
+              <h3 className="text-lg font-bold">{currentLearning.title}</h3>
+            </div>
+            <p className="text-brand-on-surface-muted leading-relaxed">
+              {currentLearning.body}
             </p>
           </motion.div>
 
@@ -950,17 +1309,17 @@ export default function App() {
               {
                 icon: Sparkles,
                 t: "Proyectos web y datos",
-                d: "Fast Repuestos, Clothes-Marina y Mototaxi Runner públicos online; LaburoSV (equipo Django) sobre bolsa laboral salvadoreña; biblioteca MySQL/Java con modelo avanzado en Workbench.",
+                d: "BusNET (Buildathon) y Clothes Marina en producción; LaburoSV (TPI, chat en tiempo real); Fast Repuestos, Mototaxi Runner y biblioteca MySQL/Java.",
               },
               {
                 icon: Briefcase,
-                t: "LABURO SV",
-                d: "Bolsa inclusiva para empresas y profesionales freelance.",
+                t: "Clothes Marina · freelance",
+                d: "49 interacciones en Google en el 1.er mes — catálogo en producción para tienda real; única experiencia con cliente hasta ahora.",
               },
               {
                 icon: Zap,
-                t: "API + TanStack Query",
-                d: "Aprendiendo a consumir y diseñar APIs: frontend con TanStack Query y una API en desarrollo como laboratorio.",
+                t: currentLearning.title,
+                d: currentLearning.body,
               },
             ].map((x, i) => (
               <motion.div
