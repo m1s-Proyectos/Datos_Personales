@@ -22,10 +22,6 @@ import {
   FileText,
   ChevronUp,
   Map,
-  MapPin,
-  Clock,
-  Languages,
-  Users,
   Menu,
   X,
   ExternalLink,
@@ -46,37 +42,18 @@ const LINKEDIN_URL =
   "https://www.linkedin.com/in/francisco-javier-mart%C3%ADnez-quinteros-60a92632b/";
 
 const PROFESSIONAL_LANE =
-  "Desarrollador web junior · React, TypeScript y APIs · proyectos desplegados en El Salvador";
+  "Desarrollador web junior · React, TypeScript y APIs";
 
-const EXECUTIVE_SUMMARY = [
-  "Desarrollador web junior con proyectos desplegados en movilidad pública, e-commerce y apps full stack.",
-  "Experiencia en React, Django y bases de datos.",
-  "Busco primera oportunidad formal en equipo de producto.",
-];
+const HERO_PITCH =
+  "Proyectos desplegados en movilidad pública, e-commerce y full stack. Busco mi primera oportunidad formal en equipo de producto.";
+
+const HERO_META =
+  "El Salvador · Tiempo completo · Remoto o híbrido · Inglés B1";
 
 const portfolioMetrics = [
   "Catálogo en producción · 49 interacciones Google en el 1.er mes",
   "Buildathon San Salvador — demo funcional con rutas reales",
   "Proyecto TPI — app multi-rol con chat en tiempo real",
-];
-
-const hrSignals: { icon: typeof MapPin; label: string; value: string }[] = [
-  { icon: MapPin, label: "Ubicación", value: "El Salvador" },
-  {
-    icon: Clock,
-    label: "Disponibilidad",
-    value: "Tiempo completo · remoto o híbrido",
-  },
-  {
-    icon: Languages,
-    label: "Inglés",
-    value: "Intermedio B1",
-  },
-  {
-    icon: Users,
-    label: "Colaboración",
-    value: "Git en equipo y ágil en proyectos universitarios (TPI, Buildathon)",
-  },
 ];
 
 const AI_ASSISTANCE_NOTE =
@@ -486,7 +463,7 @@ const projects: PortfolioProject[] = [
     problem:
       "Bolsa de empleo orientada a El Salvador: registro por roles (administrador, empresa y candidato), verificación por correo, alta de empresas con SolicitudEmpresa (pendiente / aprobada / rechazada) y enlaces UUID, perfiles muy completos adaptados al país (departamentos y municipios, CV y medios), ofertas publicadas con favoritos, postulaciones con estados y reseñas entre usuarios.",
     arch:
-      "Monorepo Django multi-app (`usuarios`, `perfiles`, `ofertas`, `postulaciones`, `mensajeria`, `adminpanel`): modelos tipo Usuario extendido (AbstractUser), PerfilCandidato y PerfilEmpresa con medios en Cloudinary, Postulacion con unicidad por par candidato–oferta y señales que crean chat grupal/notificaciones. Mensajeria con Channels y WebSocket (`ChatConsumer`), Redis opcional o capa en memoria si no hay broker. Producción configurada para Render, PostgreSQL, login social Google vía django-allauth; admin Django montado en ruta secreta más panel interno propio para aprobar solicitudes de empresa y moderar usuarios.",
+      "Monorepo Django multi-app (`usuarios`, `perfiles`, `ofertas`, `postulaciones`, `mensajeria`, `adminpanel`): modelos tipo Usuario extendido (AbstractUser), PerfilCandidato y PerfilEmpresa con medios en Cloudinary, Postulacion con unicidad por par candidato–oferta y señales que crean chat grupal/notificaciones. Mensajería con Channels y WebSocket (`ChatConsumer`), Redis opcional o capa en memoria si no hay broker. Producción configurada para Render, PostgreSQL, login social Google vía django-allauth; admin Django montado en ruta secreta más panel interno propio para aprobar solicitudes de empresa y moderar usuarios.",
     role:
       "En equipo de 5 del TPI, desarrollé el módulo de chat y mensajería con variaciones por rol —más complejidad en permisos y flujos— y quedó finalizado con éxito.",
     code: "https://github.com/CristianJaeger1705/Proyecto-TPI/tree/Frank",
@@ -631,7 +608,7 @@ const familiaritySkills = [
 
 const currentLearning = {
   title: "Aprendizaje actual",
-  body: "Practico consumo y diseño de APIs con TanStack Query en React mientras armo una API propia como laboratorio — cliente, servidor y estados asíncronos, paso a paso, aparte de mis proyectos en producción.",
+  body: "Sigo trabajando en BusNET con mejoras activas — rutas más precisas, planner y notificaciones — junto al equipo del Buildathon. En paralelo, pongo en práctica el consumo y diseño de APIs con TanStack Query en React mientras armo una API propia como laboratorio.",
 };
 
 const experienceIntro = [
@@ -773,113 +750,64 @@ export default function App() {
           <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-brand-secondary/10 blur-[120px] rounded-full" />
         </div>
 
-        <div className="section-container relative z-10">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex flex-col items-center gap-4 w-full mb-10">
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={fadeIn}
-              >
-                <img
-                  src={`${import.meta.env.BASE_URL}yo.jpg`}
-                  alt="Francisco Martínez"
-                  width={160}
-                  height={160}
-                  decoding="async"
-                  fetchPriority="high"
-                  className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-2 border-brand-primary/50 shadow-lg ring-2 ring-brand-primary/20"
-                />
-              </motion.div>
+        <div className="section-container relative z-10 py-10 md:py-14">
+          <div className="max-w-2xl mx-auto text-center">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={fadeIn}
+              className="mb-6"
+            >
+              <img
+                src={`${import.meta.env.BASE_URL}yo.jpg`}
+                alt="Francisco Martínez"
+                width={160}
+                height={160}
+                decoding="async"
+                fetchPriority="high"
+                className="mx-auto w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border-2 border-brand-primary/50 shadow-lg ring-2 ring-brand-primary/20"
+              />
+            </motion.div>
 
-              <motion.p
-                initial="hidden"
-                animate="visible"
-                variants={fadeIn}
-                className="text-sm md:text-base font-bold tracking-wide text-brand-primary text-center max-w-2xl mx-auto leading-snug"
-              >
-                {PROFESSIONAL_LANE}
-              </motion.p>
-            </div>
+            <motion.h1
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeIn}
+              className="text-4xl md:text-6xl font-extrabold leading-[1.05] tracking-tight text-balance mb-3"
+            >
+              Francisco Martínez
+            </motion.h1>
 
-            <div className="text-center space-y-5 mb-8">
-              <motion.h1
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeIn}
-                className="text-5xl md:text-7xl font-extrabold leading-[1.05] tracking-tight text-balance"
-              >
-                Francisco Martínez
-              </motion.h1>
+            <motion.p
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeIn}
+              className="text-sm md:text-base font-semibold text-brand-primary mb-4"
+            >
+              {PROFESSIONAL_LANE}
+            </motion.p>
 
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeIn}
-                className="mx-auto max-w-2xl space-y-2 rounded-xl border border-brand-primary/25 bg-brand-primary/[0.06] px-5 py-4 text-left sm:px-6 sm:py-5"
-              >
-                {EXECUTIVE_SUMMARY.map((line, idx) => (
-                  <p
-                    key={idx}
-                    className={`leading-relaxed ${
-                      idx === EXECUTIVE_SUMMARY.length - 1
-                        ? "text-brand-primary font-semibold text-[15px] md:text-base"
-                        : "text-brand-on-surface text-[15px] md:text-base"
-                    }`}
-                  >
-                    {line}
-                  </p>
-                ))}
-              </motion.div>
+            <motion.p
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeIn}
+              className="text-base md:text-[17px] text-brand-on-surface-muted leading-relaxed mb-4"
+            >
+              {HERO_PITCH}
+            </motion.p>
 
-              <motion.ul
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeIn}
-                className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto"
-              >
-                {portfolioMetrics.map((metric) => (
-                  <li
-                    key={metric}
-                    className="rounded-full border border-brand-outline/50 bg-brand-surface/80 px-3 py-1 text-[11px] font-medium text-brand-on-surface-muted sm:text-xs"
-                  >
-                    {metric}
-                  </li>
-                ))}
-              </motion.ul>
-
-              <motion.dl
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={fadeIn}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto text-left"
-              >
-                {hrSignals.map(({ icon: Icon, label, value }) => (
-                  <div
-                    key={label}
-                    className="flex gap-2.5 rounded-lg border border-brand-outline/35 bg-brand-surface/40 px-3 py-2.5"
-                  >
-                    <Icon
-                      size={16}
-                      className="shrink-0 text-brand-primary mt-0.5"
-                      aria-hidden
-                    />
-                    <div className="min-w-0">
-                      <dt className="text-[10px] font-bold uppercase tracking-wider text-brand-primary/90">
-                        {label}
-                      </dt>
-                      <dd className="text-[12px] leading-snug text-brand-on-surface-muted sm:text-[13px]">
-                        {value}
-                      </dd>
-                    </div>
-                  </div>
-                ))}
-              </motion.dl>
-            </div>
+            <motion.p
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeIn}
+              className="text-xs md:text-sm text-brand-on-surface-muted/85 mb-8"
+            >
+              {HERO_META}
+            </motion.p>
 
             <motion.div
               initial="hidden"
@@ -939,7 +867,7 @@ export default function App() {
                   <span className="text-brand-on-surface font-medium">
                     BusNET
                   </span>{" "}
-                  (movilidad pública, Buildathon) y{" "}
+                  (movilidad pública, pensado en Buildathon 2026) y{" "}
                   <span className="text-brand-on-surface font-medium">
                     Clothes Marina
                   </span>{" "}
