@@ -448,9 +448,7 @@ const projects: PortfolioProject[] = [
     title: "Banca Inteligente — Agente de cobranza preventiva por voz",
     categories: ["full-stack", "automation"],
     collaborative: true,
-    noImagePreset: "briefcase",
-    noImageSrOnly:
-      "Panel operativo de cobranza preventiva con agente de voz Retell (sin captura en el portafolio aún)",
+    img: "project-banca-inteligente.png",
     tags: [
       "React",
       "TypeScript",
