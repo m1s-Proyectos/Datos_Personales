@@ -27,9 +27,12 @@ import {
   ExternalLink,
   Code2,
   ChevronDown,
+  Phone,
+  Target,
 } from "lucide-react";
 import { CaseStudyDetails } from "./components/CaseStudyDetails";
 import { busnetCaseStudySections } from "./data/busnetCaseStudy";
+import { bancaInteligenteCaseStudySections } from "./data/bancaInteligenteCaseStudy";
 import { clothesMarinaCaseStudySections } from "./data/clothesMarinaCaseStudy";
 import { mototaxiRunnerCaseStudySections } from "./data/mototaxiRunnerCaseStudy";
 import type { CaseStudySectionData } from "./data/caseStudyTypes";
@@ -42,19 +45,33 @@ const LINKEDIN_URL =
   "https://www.linkedin.com/in/francisco-javier-mart%C3%ADnez-quinteros-60a92632b/";
 
 const PROFESSIONAL_LANE =
-  "Desarrollador web junior · React, TypeScript y APIs";
+  "Desarrollador full stack junior · React, TypeScript, FastAPI y APIs";
 
 const HERO_PITCH =
-  "Proyectos desplegados en movilidad pública, e-commerce y full stack. Busco mi primera oportunidad formal en equipo de producto.";
+  "Interfaces, APIs e integraciones en producción: agente de voz para cobranza preventiva, movilidad pública, e-commerce y sistemas con backend. Busco mi primera oportunidad formal en equipo de producto.";
 
 const HERO_META =
   "El Salvador · Tiempo completo · Remoto o híbrido · Inglés B1";
 
 const portfolioMetrics = [
+  "Banca Inteligente — panel y API desplegados (Vercel + Render)",
   "Catálogo en producción · 49 interacciones Google en el 1.er mes",
   "Buildathon San Salvador — demo funcional con rutas reales",
   "Proyecto TPI — app multi-rol con chat en tiempo real",
 ];
+
+type ProjectCategoryId =
+  | "full-stack"
+  | "frontend"
+  | "backend"
+  | "automation";
+
+const projectCategoryLabels: Record<ProjectCategoryId, string> = {
+  "full-stack": "Full stack",
+  frontend: "Frontend moderno",
+  backend: "APIs y backend",
+  automation: "Automatización e integraciones",
+};
 
 const AI_ASSISTANCE_NOTE =
   "Uso asistencia de IA (Cursor, Codex, etc.) para acelerar desarrollo; el criterio técnico y la integración son míos.";
@@ -89,6 +106,10 @@ type PortfolioNoImagePreset = "database" | "briefcase" | "map";
 
 type PortfolioProject = {
   title: string;
+  /** Categorías para filtros y contexto (sin duplicar tarjetas). */
+  categories?: ProjectCategoryId[];
+  /** Proyecto en equipo → etiqueta «Mi contribución técnica». */
+  collaborative?: boolean;
   img?: string;
   /** Qué dibujar en la cabecera de la tarjeta si falta captura del proyecto */
   noImagePreset?: PortfolioNoImagePreset;
@@ -193,6 +214,18 @@ function ProjectPortfolioCard({
         <h3 className="mb-2 line-clamp-3 text-lg font-bold leading-snug tracking-tight text-brand-on-surface md:text-xl">
           {p.title}
         </h3>
+        {p.categories?.length ? (
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {p.categories.map((cat) => (
+              <span
+                key={cat}
+                className="inline-flex shrink-0 items-center rounded-full border border-brand-outline/45 bg-brand-bg/50 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-brand-on-surface-muted sm:text-[10px]"
+              >
+                {projectCategoryLabels[cat]}
+              </span>
+            ))}
+          </div>
+        ) : null}
         <div className="mb-4 flex max-h-[5.25rem] flex-wrap gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin]">
           {p.tags.map((t) => (
             <span
@@ -214,7 +247,7 @@ function ProjectPortfolioCard({
             </p>
             <p>
               <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-widest text-brand-primary/90 md:text-[11px]">
-                Mi rol
+                {p.collaborative ? "Mi contribución técnica" : "Mi rol"}
               </span>
               <span className="text-brand-on-surface-muted/95">{p.role}</span>
             </p>
@@ -320,7 +353,7 @@ function ProjectPortfolioCard({
             aria-expanded={isExpanded}
             aria-controls={contentId}
           >
-            {isExpanded ? "Mostrar menos" : "Ver toda la información"}
+            {isExpanded ? "Mostrar menos" : "Detalles técnicos"}
             <ChevronDown
               size={16}
               className={`shrink-0 transition-transform duration-300 ease-out ${
@@ -340,7 +373,7 @@ function ProjectPortfolioCard({
                 rel="noopener noreferrer"
                 className="inline-flex min-h-[44px] flex-1 min-w-0 items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2.5 text-[11px] font-extrabold uppercase tracking-[0.12em] text-brand-bg shadow-[0_0_0_1px_rgba(87,241,219,0.35),0_8px_24px_-8px_rgba(87,241,219,0.45)] transition-all duration-300 hover:bg-brand-primary/92 hover:text-brand-bg hover:shadow-[0_0_0_1px_rgba(87,241,219,0.55),0_12px_32px_-6px_rgba(87,241,219,0.5)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:ring-offset-brand-surface"
               >
-                Ver proyecto
+                Ver demo
                 <ExternalLink size={16} className="shrink-0 opacity-95" aria-hidden />
               </a>
             ) : null}
@@ -378,6 +411,8 @@ function ProjectPortfolioCard({
 const projects: PortfolioProject[] = [
   {
     title: "BusNET — Movilidad & transporte público (SV)",
+    categories: ["full-stack", "automation"],
+    collaborative: true,
     img: "project-busnet.jpg",
     inDevelopment: true,
     tags: [
@@ -410,7 +445,40 @@ const projects: PortfolioProject[] = [
     },
   },
   {
+    title: "Banca Inteligente — Agente de cobranza preventiva por voz",
+    categories: ["full-stack", "automation"],
+    collaborative: true,
+    noImagePreset: "briefcase",
+    noImageSrOnly:
+      "Panel operativo de cobranza preventiva con agente de voz Retell (sin captura en el portafolio aún)",
+    tags: [
+      "React",
+      "TypeScript",
+      "Vite",
+      "FastAPI",
+      "Retell",
+      "PostgreSQL",
+      "Docker",
+    ],
+    impact:
+      "MVP desplegado: panel en Vercel y API en Render, con llamadas web Retell, tools HTTP y webhooks — demo pública verificada al cargar el panel.",
+    problem:
+      "Recordar obligaciones financieras antes del vencimiento mediante un agente conversacional por voz, con panel de gestión, API backend y trazabilidad de llamadas — alternativa a contacto manual disperso.",
+    arch:
+      "Monorepo: frontend React + Vite + Recharts (Vercel); backend FastAPI + SQLAlchemy + worker de CallJobs (Render); PostgreSQL en producción y SQLite en demo local (Alembic); Retell para voz (web call y teléfono programado) con tools verify-identity, get-assistance-options y request-reschedule; Docker Compose en desarrollo.",
+    role:
+      "En equipo de 3: levanté el MVP inicial (API, worker, panel y flujo Retell hasta integración 2.8), configuré despliegue Render/Vercel, CORS del panel, Alembic con psycopg3 y la URL base del frontend. Las vistas avanzadas del panel, análisis post-llamada y endurecimiento del dashboard fueron ampliados por el resto del equipo — ver historial de commits en el repo público.",
+    live: "https://banca-inteligente-one.vercel.app/",
+    code: "https://github.com/m1s-Proyectos/Banca-Inteligente-AGRICOLA",
+    caseStudy: {
+      teaser:
+        "Abre «Detalles técnicos» para ver el flujo panel → worker → Retell → tools, stack agrupado, seguridad HMAC y enlaces de despliegue.",
+      sections: bancaInteligenteCaseStudySections,
+    },
+  },
+  {
     title: "Clothes Marina — Catálogo comercial integral",
+    categories: ["full-stack"],
     img: "project-clothes-marina.jpg",
     tags: [
       "React",
@@ -447,6 +515,8 @@ const projects: PortfolioProject[] = [
   },
   {
     title: "LaburoSV — Bolsa de trabajo · Proyecto TPI",
+    categories: ["full-stack", "backend"],
+    collaborative: true,
     img: "project-laburosv.jpg",
     tags: [
       "Django",
@@ -471,6 +541,7 @@ const projects: PortfolioProject[] = [
   },
   {
     title: "Plataforma de Venta de Autopartes (e-commerce)",
+    categories: ["frontend"],
     img: "project-repuestos.jpg",
     tags: ["Next.js", "React", "JavaScript", "HTML/CSS", "Solo frontend"],
     impact:
@@ -486,6 +557,7 @@ const projects: PortfolioProject[] = [
   },
   {
     title: "Mototaxi Runner (Juego Three.js)",
+    categories: ["full-stack", "frontend"],
     img: "project-mototaxi.jpg",
     tags: [
       "TypeScript",
@@ -515,6 +587,7 @@ const projects: PortfolioProject[] = [
   },
   {
     title: "Sistema de gestión de biblioteca (DB Engineering)",
+    categories: ["backend"],
     img: "project-biblioteca.png",
     tags: [
       "MySQL Workbench",
@@ -556,15 +629,24 @@ const skillCategories = [
       "Node.js",
       "Express",
       "Python",
+      "FastAPI",
       "Django",
       "Java",
-      "REST APIs (básico)",
+      "REST APIs",
     ],
   },
   {
     icon: Database,
     title: "Bases de datos",
-    skills: ["PostgreSQL", "MySQL", "Oracle", "SQL Server", "SP / triggers / vistas (MySQL)"],
+    skills: [
+      "PostgreSQL",
+      "MySQL",
+      "SQLite",
+      "Oracle",
+      "SQL Server",
+      "SQLAlchemy",
+      "SP / triggers / vistas (MySQL)",
+    ],
   },
   {
     icon: Wrench,
@@ -579,6 +661,8 @@ const skillCategories = [
       "SQL Developer",
       "Postman",
       "Supabase",
+      "Docker",
+      "Render",
       "Google Drive",
       "Azure (básico)",
     ],
@@ -589,6 +673,9 @@ const familiaritySkills = [
   "TanStack Query",
   "MapLibre GL",
   "Three.js",
+  "Recharts",
+  "Retell (integración en proyecto)",
+  "Alembic",
   "Rust (exposición en proyecto)",
   "Java Swing",
   "JavaFX (básico)",
@@ -598,27 +685,92 @@ const familiaritySkills = [
   "JSON (archivos)",
   "Redis",
   "MySQL Workbench",
-  "Docker",
   "Apache HTTP (básico)",
   "Nginx (básico)",
   "IIS (básico)",
 ];
 
+const stackAndGoals = {
+  intro:
+    "Trabajo en aplicaciones web modernas, integrando interfaces frontend, APIs backend, bases de datos y servicios externos. Me interesa fortalecer arquitectura full stack, sistemas confiables, automatización y despliegue en la nube.",
+  tiers: [
+    {
+      title: "Proyectos reales (núcleo)",
+      groups: [
+        {
+          label: "Frontend",
+          items: ["React", "TypeScript", "Vite", "Tailwind CSS"],
+        },
+        {
+          label: "Backend y APIs",
+          items: ["Python", "FastAPI", "Node.js", "Express", "Django"],
+        },
+        {
+          label: "Bases de datos",
+          items: ["PostgreSQL", "MySQL", "SQLite", "SQLAlchemy"],
+        },
+        {
+          label: "Integraciones y automatización",
+          items: [
+            "APIs REST",
+            "Retell (agente de voz)",
+            "Workers / jobs asíncronos",
+            "WebSockets (TPI)",
+          ],
+        },
+        {
+          label: "Herramientas e infraestructura",
+          items: ["Git", "Docker", "Render", "Vercel", "Supabase"],
+        },
+      ],
+    },
+    {
+      title: "Exposición o nivel básico",
+      groups: [
+        {
+          label: "En equipo o side projects",
+          items: [
+            "Rust (BusNET)",
+            "MapLibre GL",
+            "Three.js",
+            "Redis",
+            "Spring Boot (proyecto académico)",
+          ],
+        },
+      ],
+    },
+    {
+      title: "Objetivos profesionales",
+      groups: [
+        {
+          label: "Quiero profundizar",
+          items: [
+            "Arquitectura y pruebas en APIs",
+            "Observabilidad y despliegue cloud",
+            "Patrones async (TanStack Query, colas)",
+            "Diseño de integraciones seguras (webhooks, HMAC)",
+          ],
+        },
+      ],
+    },
+  ],
+};
+
 const currentLearning = {
   title: "Aprendizaje actual",
-  body: "Sigo trabajando en BusNET con mejoras activas — rutas más precisas, planner y notificaciones — junto al equipo del Buildathon. En paralelo, pongo en práctica el consumo y diseño de APIs con TanStack Query en React mientras armo una API propia como laboratorio.",
+  body: "Sigo en BusNET (mejoras de rutas y planner con el Buildathon) y profundizo APIs con TanStack Query en un laboratorio propio. Recientemente integré despliegue y Retell en Banca Inteligente junto a un equipo de tres.",
 };
 
 const experienceIntro = [
-  "Hoy destaco BusNET (movilidad pública en El Salvador, en desarrollo con el equipo del Buildathon) y Clothes Marina (catálogo comercial en producción con React y Supabase). Ambos tienen demo pública.",
-  "También participé en LaburoSV (bolsa TPI con Django, PostgreSQL y mensajería en tiempo real), Fast Repuestos, Mototaxi Runner y un sistema de biblioteca modelado en MySQL Workbench con interfaz Java Swing.",
+  "Destaco Banca Inteligente (cobranza preventiva por voz, full stack desplegado), BusNET (movilidad pública, Buildathon) y Clothes Marina (catálogo en producción con React y Supabase). Las tres tienen demo enlazada.",
+  "En LaburoSV (TPI) implementé chat y mensajería multi-rol; también Fast Repuestos, Mototaxi Runner y biblioteca MySQL/Java completan el portfolio con problemas distintos y stacks verificables.",
 ];
 
 const experienceTimeline = [
   {
     date: "2023 — Presente",
     company: "Proyectos portfolio y productos desplegados",
-    desc: "BusNET (Buildathon, equipo activo): planner de buses sobre GeoJSON locales. Clothes Marina en producción. Además: LaburoSV, autopartes, Mototaxi Runner y biblioteca MySQL/Java.",
+    desc: "Banca Inteligente (equipo de 3, Retell + FastAPI). BusNET (Buildathon). Clothes Marina en producción. Además: LaburoSV, autopartes, Mototaxi Runner y biblioteca MySQL/Java.",
   },
   {
     date: "2022 — 2023",
@@ -640,7 +792,12 @@ const aboutHighlights: {
   {
     icon: Terminal,
     title: "Tecnologías principales",
-    body: "React, TypeScript, Django, Node.js y PostgreSQL en proyectos desplegados. Modelado ER con MySQL Workbench (triggers, vistas y SPs). Java + Spring Boot en un proyecto pequeño entregado.",
+    body: "React, TypeScript, FastAPI, Django, Node.js y PostgreSQL en proyectos desplegados. Modelado ER con MySQL Workbench. Java + Spring Boot en un proyecto académico entregado.",
+  },
+  {
+    icon: Phone,
+    title: "Banca Inteligente",
+    body: "Agente de voz Retell + panel React + API FastAPI desplegados; cobranza preventiva con tools HTTP, worker de llamadas y auditoría.",
   },
   {
     icon: Map,
@@ -656,9 +813,18 @@ const aboutHighlights: {
 
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [projectFilter, setProjectFilter] = useState<
+    "all" | ProjectCategoryId
+  >("all");
   const [expandedProjects, setExpandedProjects] = useState<
     Record<string, boolean>
   >({});
+
+  const filteredProjects = projects.filter(
+    (p) =>
+      projectFilter === "all" ||
+      p.categories?.includes(projectFilter) === true,
+  );
 
   const navLinkClass =
     "text-brand-on-surface-muted hover:text-brand-primary transition-colors py-2";
@@ -667,6 +833,7 @@ export default function App() {
     { href: "#about", label: "Acerca de mí" },
     { href: "#projects", label: "Proyectos" },
     { href: "#skills", label: "Habilidades" },
+    { href: "#stack-goals", label: "Stack y objetivos" },
     { href: "#experience", label: "Experiencia" },
   ];
 
@@ -860,18 +1027,21 @@ export default function App() {
                   Introducción
                 </h3>
                 <p className="text-brand-on-surface-muted leading-relaxed">
-                  Desarrollador web junior con foco en productos desplegados.
-                  Lo más reciente:{" "}
+                  Desarrollador full stack junior con foco en productos
+                  desplegados. Lo más reciente:{" "}
+                  <span className="text-brand-on-surface font-medium">
+                    Banca Inteligente
+                  </span>{" "}
+                  (agente de voz + FastAPI),{" "}
                   <span className="text-brand-on-surface font-medium">
                     BusNET
                   </span>{" "}
-                  (movilidad pública, pensado en Buildathon 2026) y{" "}
+                  (movilidad pública, Buildathon 2026) y{" "}
                   <span className="text-brand-on-surface font-medium">
                     Clothes Marina
                   </span>{" "}
-                  (catálogo + panel admin en Supabase). LaburoSV, autopartes,
-                  Mototaxi Runner y biblioteca completan el portfolio con
-                  trabajo en equipo, frontend y datos.
+                  (catálogo + Supabase). LaburoSV, autopartes, Mototaxi Runner y
+                  biblioteca muestran otros stacks y formas de colaborar.
                 </p>
               </motion.div>
 
@@ -906,16 +1076,18 @@ export default function App() {
                   </h3>
                   <p className="text-brand-on-surface-muted leading-relaxed">
                     <span className="text-brand-on-surface font-medium">
+                      Banca Inteligente
+                    </span>{" "}
+                    une panel, API, worker y Retell;{" "}
+                    <span className="text-brand-on-surface font-medium">
                       BusNET
                     </span>{" "}
-                    concentra mapa, planner y tráfico comunitario sobre GeoJSON
-                    locales;{" "}
+                    concentra mapa y planner;{" "}
                     <span className="text-brand-on-surface font-medium">
                       Clothes Marina
                     </span>{" "}
-                    conecta escaparate digital con operaciones reales del
-                    negocio. Son los proyectos que mejor muestran mi lane
-                    actual.
+                    conecta escaparate con operación real. Cada uno resuelve un
+                    problema distinto con demo verificable.
                   </p>
                 </motion.div>
               </div>
@@ -994,8 +1166,8 @@ export default function App() {
                 variants={fadeIn}
                 className="text-brand-on-surface-muted mt-2 max-w-lg leading-relaxed"
               >
-                Despliega el detalle con «Ver toda la información» manteniendo la grilla limpia y
-                proporciones parejas.
+                Filtra por tipo de trabajo; abre «Detalles técnicos» para arquitectura,
+                flujos y contribución en equipo.
               </motion.p>
             </div>
             <motion.div
@@ -1013,10 +1185,50 @@ export default function App() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
+            variants={fadeIn}
+            className="mb-10 flex flex-wrap gap-2"
+            role="group"
+            aria-label="Filtrar proyectos por categoría"
+          >
+            <button
+              type="button"
+              onClick={() => setProjectFilter("all")}
+              className={`min-h-[44px] rounded-lg border px-4 py-2 text-xs font-bold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary ${
+                projectFilter === "all"
+                  ? "border-brand-primary bg-brand-primary/15 text-brand-primary"
+                  : "border-brand-outline/50 text-brand-on-surface-muted hover:border-brand-primary/50"
+              }`}
+            >
+              Todos
+            </button>
+            {(Object.keys(projectCategoryLabels) as ProjectCategoryId[]).map(
+              (cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setProjectFilter(cat)}
+                  className={`min-h-[44px] rounded-lg border px-4 py-2 text-xs font-bold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary ${
+                    projectFilter === cat
+                      ? "border-brand-primary bg-brand-primary/15 text-brand-primary"
+                      : "border-brand-outline/50 text-brand-on-surface-muted hover:border-brand-primary/50"
+                  }`}
+                >
+                  {projectCategoryLabels[cat]}
+                </button>
+              ),
+            )}
+          </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
             variants={staggerContainer}
             className="grid grid-cols-1 gap-7 items-stretch md:grid-cols-2 md:gap-8 lg:grid-cols-3 lg:gap-9"
           >
-            {projects.map((p, idx) => (
+            {filteredProjects.map((p) => {
+              const idx = projects.findIndex((item) => item.title === p.title);
+              return (
               <motion.div
                 key={p.title}
                 variants={fadeIn}
@@ -1034,8 +1246,14 @@ export default function App() {
                   }
                 />
               </motion.div>
-            ))}
+            );
+            })}
           </motion.div>
+          {filteredProjects.length === 0 ? (
+            <p className="text-center text-brand-on-surface-muted py-12">
+              Ningún proyecto en esta categoría todavía.
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -1125,6 +1343,68 @@ export default function App() {
         </div>
       </section>
 
+      <section id="stack-goals" className="bg-brand-surface/25">
+        <div className="section-container">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeIn}
+            className="mx-auto max-w-4xl text-center mb-12"
+          >
+            <div className="mb-3 flex justify-center">
+              <Target
+                size={28}
+                className="text-brand-primary"
+                aria-hidden
+              />
+            </div>
+            <h2 className="text-3xl font-bold mb-4">
+              Stack actual y objetivos profesionales
+            </h2>
+            <p className="text-brand-on-surface-muted leading-relaxed">
+              {stackAndGoals.intro}
+            </p>
+          </motion.div>
+
+          <div className="mx-auto max-w-5xl space-y-8">
+            {stackAndGoals.tiers.map((tier) => (
+              <motion.div
+                key={tier.title}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeIn}
+                className="rounded-xl border border-brand-outline/40 bg-brand-surface/50 p-6 sm:p-8"
+              >
+                <h3 className="text-lg font-bold text-brand-primary mb-6">
+                  {tier.title}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {tier.groups.map((group) => (
+                    <div key={group.label}>
+                      <p className="text-xs font-bold uppercase tracking-widest text-brand-on-surface-muted mb-3">
+                        {group.label}
+                      </p>
+                      <ul className="flex flex-wrap gap-2">
+                        {group.items.map((item) => (
+                          <li
+                            key={item}
+                            className="rounded-lg border border-brand-outline/45 bg-brand-bg/40 px-3 py-1.5 text-sm text-brand-on-surface"
+                          >
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section id="experience">
         <div className="section-container">
           <motion.h2
@@ -1202,7 +1482,7 @@ export default function App() {
             className="mb-12"
           >
             <h3 className="text-xl font-bold mb-4">Resultados en contexto</h3>
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {portfolioMetrics.map((metric) => (
                 <li
                   key={metric}
@@ -1235,7 +1515,7 @@ export default function App() {
               {
                 icon: Sparkles,
                 t: "Proyectos web y datos",
-                d: "BusNET (Buildathon) y Clothes Marina en producción; LaburoSV (TPI, chat en tiempo real); Fast Repuestos, Mototaxi Runner y biblioteca MySQL/Java.",
+                d: "Banca Inteligente (Retell + FastAPI), BusNET (Buildathon) y Clothes Marina en producción; LaburoSV, Mototaxi Runner y biblioteca MySQL/Java.",
               },
               {
                 icon: Briefcase,
