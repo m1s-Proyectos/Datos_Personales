@@ -29,16 +29,18 @@ import {
   ChevronDown,
   Phone,
   Target,
+  ShieldCheck,
 } from "lucide-react";
 import { CaseStudyDetails } from "./components/CaseStudyDetails";
 import { busnetCaseStudySections } from "./data/busnetCaseStudy";
 import { bancaInteligenteCaseStudySections } from "./data/bancaInteligenteCaseStudy";
 import { clothesMarinaCaseStudySections } from "./data/clothesMarinaCaseStudy";
+import { oficioCyberCoachCaseStudySections } from "./data/oficioCyberCoachCaseStudy";
 import { mototaxiRunnerCaseStudySections } from "./data/mototaxiRunnerCaseStudy";
 import type { CaseStudySectionData } from "./data/caseStudyTypes";
 
 const CV_URL =
-  "https://drive.google.com/file/d/1SsNwnkNK7v6vW4-WPYESSm-eFU5e8mRC/view?usp=sharing";
+  "https://drive.google.com/file/d/1Pj0TFNZg1BSiyJpp-_zqWuKTsq5FE0-9/view?usp=sharing";
 const GITHUB_PROFILE =
   "https://github.com/m1s-Proyectos?tab=repositories";
 const LINKEDIN_URL =
@@ -48,13 +50,15 @@ const PROFESSIONAL_LANE =
   "Desarrollador full stack junior · React, TypeScript, FastAPI y APIs";
 
 const HERO_PITCH =
-  "Interfaces, APIs e integraciones en producción: agente de voz para cobranza preventiva, movilidad pública, e-commerce y sistemas con backend. Busco mi primera oportunidad formal en equipo de producto.";
+  "Interfaces, APIs e integraciones en producción: EdTech anti-fraude, agente de voz para cobranza, movilidad pública y e-commerce. Busco mi primera oportunidad formal en equipo de producto.";
 
 const HERO_META =
   "El Salvador · Tiempo completo · Remoto o híbrido · Inglés B1";
 
 const portfolioMetrics = [
   "Banca Inteligente — panel y API desplegados (Vercel + Render)",
+  "OFICIO Cyber Coach — EdTech anti-fraude en Vercel (motor + TTS)",
+  "Clothes Marina — ~2 ventas extra/día vs. operación previa + hardening P0/P1",
   "Catálogo en producción · 49 interacciones Google en el 1.er mes",
   "Buildathon San Salvador — demo funcional con rutas reales",
   "Proyecto TPI — app multi-rol con chat en tiempo real",
@@ -80,7 +84,7 @@ const workExperience = [
   {
     date: "Freelance · cliente real",
     company: "Clothes Marina — tienda física",
-    desc: "Levanté requerimientos desde cero, diseñé e implementé el catálogo en producción que la tienda usa hoy. En el primer mes el Perfil de Negocio en Google registró 49 interacciones (llamadas, direcciones y clics). Busco mi primera oportunidad en empresa corporativa.",
+    desc: "Levanté requerimientos desde cero, diseñé e implementé el catálogo en producción. Resultado de negocio: el sitio se consolidó como canal de captación y aporta al menos ~2 ventas extra al día respecto a la operación previa. En el primer mes, el Perfil de Negocio en Google registró 49 interacciones. Además audité y endurecí seguridad en producción (SSRF, OG poisoning, RPC/RLS, Security CI). Busco mi primera oportunidad en empresa corporativa.",
   },
 ];
 
@@ -132,6 +136,12 @@ type PortfolioProject = {
     img: string;
     alt: string;
     caption: string;
+  };
+  /** Bloque de evidencia / veredicto QA visible en la tarjeta (opcional). */
+  evidenceBlock?: {
+    title: string;
+    verdict: string;
+    bullets: string[];
   };
   /** Detalle técnico ampliable en acordeones (opcional). */
   caseStudy?: {
@@ -264,6 +274,22 @@ function ProjectPortfolioCard({
                   {p.metricsProof.caption}
                 </figcaption>
               </figure>
+            ) : null}
+            {p.evidenceBlock ? (
+              <div className="rounded-lg border border-brand-primary/30 bg-brand-primary/[0.06] p-3 sm:p-3.5">
+                <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-brand-primary md:text-[11px]">
+                  <ShieldCheck size={14} className="shrink-0" aria-hidden />
+                  {p.evidenceBlock.title}
+                </p>
+                <p className="mb-2 text-[12px] leading-snug text-brand-on-surface md:text-[13px]">
+                  {p.evidenceBlock.verdict}
+                </p>
+                <ul className="space-y-1.5 border-l border-brand-primary/35 pl-3 text-[11px] leading-snug text-brand-on-surface-muted sm:text-[12px]">
+                  {p.evidenceBlock.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </div>
             ) : null}
           </div>
 
@@ -475,6 +501,36 @@ const projects: PortfolioProject[] = [
     },
   },
   {
+    title: "OFICIO Cyber Coach — Entrenamiento interactivo contra fraude digital",
+    categories: ["full-stack", "frontend", "automation"],
+    noImagePreset: "briefcase",
+    noImageSrOnly:
+      "OFICIO Cyber Coach: entrenamiento EdTech contra fraude digital (demo en Vercel)",
+    tags: [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Convex",
+      "ElevenLabs",
+      "Vitest",
+      "Vercel",
+    ],
+    impact:
+      "Demo desplegada en Vercel: simulaciones ramificadas, retos rápidos con XP, motor tipado con ~150 tests y TTS educativo vía Convex + ElevenLabs.",
+    problem:
+      "Las estafas digitales se ganan con urgencia emocional. OFICIO convierte esa lección en entrenamiento jugable: verificar por canal independiente, reconocer señales y aprender qué hacer si ya se envió dinero — historias 100 % ficticias, sin pedir datos personales reales.",
+    arch:
+      "React 18 + Vite 5 + TypeScript estricto (router hash); Convex como BaaS (catálogo, voz, cuotas); dominio puro en src/engine (transiciones, evaluación, choice gate); ElevenLabs solo en servidor Convex; gamificación local (XP/rachas/badges) separada de la rúbrica oficial A–E; ~150 tests Vitest y pipeline check antes de build.",
+    role:
+      "Autor principal / product builder: diseñé e implementé el producto de punta a punta — motor determinista de simulaciones, grafos A–E con rúbrica por hitos, retos + panel de gamificación, chat educativo con narración TTS (secretos solo en Convex), catálogo tipado y despliegue en Vercel. Prototipo jugable completo; sin auth/pagos ni métricas SaaS.",
+    live: "https://oficio-cyber-coach.vercel.app/",
+    caseStudy: {
+      teaser:
+        "Abre «Detalles técnicos» para arquitectura (engine + Convex + TTS), flujos catálogo/retos, decisiones de ingeniería y el alcance honesto del prototipo.",
+      sections: oficioCyberCoachCaseStudySections,
+    },
+  },
+  {
     title: "Clothes Marina — Catálogo comercial integral",
     categories: ["full-stack"],
     img: "project-clothes-marina.jpg",
@@ -482,32 +538,43 @@ const projects: PortfolioProject[] = [
       "React",
       "Supabase",
       "PostgreSQL",
-      "Auth + RLS",
-      "Storage",
+      "RLS + RPC",
+      "CSP / headers",
+      "Security CI",
       "TypeScript",
-      "Helmet SEO",
-      "OAuth GitHub",
       "Vercel",
     ],
     impact:
-      "Catálogo en producción con tracción real: 49 interacciones en el Perfil de Negocio de Google en el primer mes (llamadas, direcciones y clics al sitio).",
+      "Canal digital en producción: ~2 ventas extra al día vs. la operación previa, más 49 interacciones en Google Business en el 1.er mes. Hardening documentado con remediaciones P0/P1 y tests de seguridad en CI.",
     problem:
       "Plataforma lista para producción que conecta el escaparate digital con operaciones reales: clientes exploran colecciones sincronizadas con la base de datos mientras Marina controla contenido, seguridad y nuevos contactos en un solo lugar.",
     arch:
-      "SPA en React con vistas públicas contextualizadas más un panel administrativo protegido; Supabase concentra Postgres, buckets de medios, políticas row-level y OAuth (correo/GitHub) según el caso de uso.",
+      "SPA React + Vercel (headers CSP/HSTS) + Supabase (Postgres, RLS, Storage, OAuth). Escrituras públicas vía RPC SECURITY DEFINER (no INSERT anónimo). Separación browser ↔ edge ↔ BD; admin gated en UI y autorizado por JWT/RLS.",
     role:
-      "Proyecto ideado y construido por mí solo —desde el relevamiento del negocio hasta el despliegue— incorporando panel admin, Supabase, SEO y WhatsApp para que el catálogo fuera usable en la operación real.",
+      "Proyecto solo: del relevamiento al despliegue (panel admin, catálogo, SEO, WhatsApp). Audité riesgos P0/P1, remedié SSRF y OG poisoning, cerré inserts públicos con RPC/RLS/honeypot/rate limit y dejé Security CI (audit, tests, SBOM, Dependabot).",
     live: "https://clothes-marina.vercel.app/",
     code: "https://github.com/m1s-Proyectos/clothes-marina",
     metricsProof: {
       img: "project-clothes-marina-metrics.png",
       alt: "Gráfico de rendimiento de Google: 49 interacciones del Perfil de Negocio de Clothes Marina en julio de 2026",
       caption:
-        "Rendimiento del Perfil de Negocio en Google (jul 2026): los clientes empiezan a interactuar en el primer mes — llamadas, reservas, direcciones y clics al sitio web.",
+        "Rendimiento del Perfil de Negocio en Google (jul 2026): llamadas, direcciones y clics al sitio. Negocio: el catálogo aporta ~2 ventas extra/día respecto a antes del sitio.",
+    },
+    evidenceBlock: {
+      title: "Veredicto QA · seguridad",
+      verdict:
+        "No es solo «una tienda en Vercel»: hardening documentado, remediaciones P0/P1, tests de seguridad en CI y controles en producción — resultados medibles, sin certificaciones inventadas.",
+      bullets: [
+        "Remedié SSRF (proxy OG) y Open Graph poisoning en APIs serverless de share.",
+        "Escrituras públicas seguras: RPC SECURITY DEFINER + validación + honeypot + rate limit (sin INSERT anónimo).",
+        "Least privilege: anon key en cliente + RLS; admin solo por JWT app_metadata (sin service role en VITE_*).",
+        "Security CI: npm audit (high+), tests de seguridad, SBOM CycloneDX, Dependabot semanal.",
+        "Defensa en profundidad: CSP/HSTS/headers en vercel.json + superficie JS reducida (script-src 'self').",
+      ],
     },
     caseStudy: {
       teaser:
-        "Pulsa «Ver toda la información» para revisar seguridad administrativa, Supabase, SEO técnico y flujos de conversión integrados en la misma plataforma.",
+        "Abre «Detalles técnicos» para ver remediaciones P0/P1, defensa en profundidad, Security CI, gobierno/SECURITY.md y el impacto comercial (~2 ventas extra/día).",
       sections: clothesMarinaCaseStudySections,
     },
   },
@@ -629,6 +696,7 @@ const skillCategories = [
       "Python",
       "FastAPI",
       "Django",
+      "Convex",
       "Java",
       "REST APIs",
     ],
@@ -673,6 +741,8 @@ const familiaritySkills = [
   "Three.js",
   "Recharts",
   "Retell (integración en proyecto)",
+  "ElevenLabs (TTS vía Convex)",
+  "Vitest",
   "Alembic",
   "Rust (exposición en proyecto)",
   "Java Swing",
@@ -686,6 +756,7 @@ const familiaritySkills = [
   "Apache HTTP (básico)",
   "Nginx (básico)",
   "IIS (básico)",
+  "EdTech / prevención de fraude (producto)",
 ];
 
 const stackAndGoals = {
@@ -701,7 +772,7 @@ const stackAndGoals = {
         },
         {
           label: "Backend y APIs",
-          items: ["Python", "FastAPI", "Node.js", "Express", "Django"],
+          items: ["Python", "FastAPI", "Node.js", "Express", "Django", "Convex"],
         },
         {
           label: "Bases de datos",
@@ -712,6 +783,7 @@ const stackAndGoals = {
           items: [
             "APIs REST",
             "Retell (agente de voz)",
+            "ElevenLabs (TTS)",
             "Workers / jobs asíncronos",
             "WebSockets (TPI)",
           ],
@@ -744,9 +816,10 @@ const stackAndGoals = {
           label: "Quiero profundizar",
           items: [
             "Arquitectura y pruebas en APIs",
+            "Dominio puro testeable + BaaS (Convex)",
             "Observabilidad y despliegue cloud",
             "Patrones async (TanStack Query, colas)",
-            "Diseño de integraciones seguras (webhooks, HMAC)",
+            "Diseño de integraciones seguras (webhooks, HMAC, secretos fuera del cliente)",
           ],
         },
       ],
@@ -756,11 +829,11 @@ const stackAndGoals = {
 
 const currentLearning = {
   title: "Aprendizaje actual",
-  body: "Sigo en BusNET (mejoras de rutas y planner con el Buildathon) y profundizo APIs con TanStack Query en un laboratorio propio. Recientemente integré despliegue y Retell en Banca Inteligente junto a un equipo de tres.",
+  body: "Profundizo productos con dominio puro testeable, BaaS (Convex) e integraciones de voz con secretos fuera del frontend — como en OFICIO Cyber Coach. Sigo en BusNET (Buildathon) y en un laboratorio de APIs con TanStack Query.",
 };
 
 const experienceIntro = [
-  "Destaco Banca Inteligente (cobranza preventiva por voz, full stack desplegado), BusNET (movilidad pública, Buildathon) y Clothes Marina (catálogo en producción con React y Supabase). Las tres tienen demo enlazada.",
+  "Destaco Banca Inteligente (voz/cobranza), OFICIO Cyber Coach (EdTech anti-fraude con React, Convex y TTS), BusNET (movilidad, Buildathon) y Clothes Marina (catálogo + hardening). Todas tienen demo enlazada.",
   "En LaburoSV (TPI) implementé chat y mensajería multi-rol; también Fast Repuestos, Mototaxi Runner y biblioteca MySQL/Java completan el portfolio con problemas distintos y stacks verificables.",
 ];
 
@@ -768,7 +841,7 @@ const experienceTimeline = [
   {
     date: "2023 — Presente",
     company: "Proyectos portfolio y productos desplegados",
-    desc: "Banca Inteligente (equipo de 3, Retell + FastAPI). BusNET (Buildathon). Clothes Marina en producción. Además: LaburoSV, autopartes, Mototaxi Runner y biblioteca MySQL/Java.",
+    desc: "OFICIO Cyber Coach (EdTech, Convex + ElevenLabs). Banca Inteligente (equipo de 3, Retell + FastAPI). BusNET (Buildathon). Clothes Marina en producción. Además: LaburoSV, autopartes, Mototaxi Runner y biblioteca MySQL/Java.",
   },
   {
     date: "2022 — 2023",
@@ -798,6 +871,11 @@ const aboutHighlights: {
     body: "Agente de voz Retell + panel React + API FastAPI desplegados; cobranza preventiva con tools HTTP, worker de llamadas y auditoría.",
   },
   {
+    icon: Sparkles,
+    title: "OFICIO Cyber Coach",
+    body: "EdTech desplegado: motor de simulaciones tipado (~150 tests), retos con XP y voz educativa (Convex + ElevenLabs) en Vercel.",
+  },
+  {
     icon: Map,
     title: "BusNET",
     body: "Planner de movilidad pública sobre rutas reales en El Salvador — mapa, búsqueda y tráfico comunitario desplegados; en evolución con el equipo del Buildathon.",
@@ -805,7 +883,7 @@ const aboutHighlights: {
   {
     icon: Briefcase,
     title: "Clothes Marina",
-    body: "Catálogo comercial en producción: escaparate React + Supabase, panel admin, SEO y embudo hacia WhatsApp para la tienda física.",
+    body: "Catálogo en producción con ~2 ventas extra/día vs. antes, hardening P0/P1 (SSRF, OG, RLS/RPC) y Security CI — React + Supabase + Vercel.",
   },
 ];
 
@@ -1028,13 +1106,18 @@ export default function App() {
                   Desarrollador full stack junior con foco en productos
                   desplegados. Lo más reciente:{" "}
                   <span className="text-brand-on-surface font-medium">
+                    OFICIO Cyber Coach
+                  </span>{" "}
+                  (entrenamiento interactivo contra fraude digital con React,
+                  Convex y TTS),{" "}
+                  <span className="text-brand-on-surface font-medium">
                     Banca Inteligente
                   </span>{" "}
                   (agente de voz + FastAPI),{" "}
                   <span className="text-brand-on-surface font-medium">
                     BusNET
                   </span>{" "}
-                  (movilidad pública, Buildathon 2026) y{" "}
+                  (movilidad, Buildathon 2026) y{" "}
                   <span className="text-brand-on-surface font-medium">
                     Clothes Marina
                   </span>{" "}
@@ -1074,18 +1157,18 @@ export default function App() {
                   </h3>
                   <p className="text-brand-on-surface-muted leading-relaxed">
                     <span className="text-brand-on-surface font-medium">
+                      OFICIO Cyber Coach
+                    </span>{" "}
+                    entrena decisiones ante fraude con motor tipado y TTS;{" "}
+                    <span className="text-brand-on-surface font-medium">
                       Banca Inteligente
                     </span>{" "}
-                    une panel, API, worker y Retell;{" "}
-                    <span className="text-brand-on-surface font-medium">
-                      BusNET
-                    </span>{" "}
-                    concentra mapa y planner;{" "}
+                    une panel, API y Retell;{" "}
                     <span className="text-brand-on-surface font-medium">
                       Clothes Marina
                     </span>{" "}
-                    conecta escaparate con operación real. Cada uno resuelve un
-                    problema distinto con demo verificable.
+                    conecta escaparate con operación real. Cada uno tiene demo
+                    verificable.
                   </p>
                 </motion.div>
               </div>
@@ -1480,7 +1563,7 @@ export default function App() {
             className="mb-12"
           >
             <h3 className="text-xl font-bold mb-4">Resultados en contexto</h3>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
               {portfolioMetrics.map((metric) => (
                 <li
                   key={metric}
@@ -1513,12 +1596,12 @@ export default function App() {
               {
                 icon: Sparkles,
                 t: "Proyectos web y datos",
-                d: "Banca Inteligente (Retell + FastAPI), BusNET (Buildathon) y Clothes Marina en producción; LaburoSV, Mototaxi Runner y biblioteca MySQL/Java.",
+                d: "OFICIO Cyber Coach (Convex + TTS), Banca Inteligente (Retell + FastAPI), BusNET y Clothes Marina en producción; LaburoSV, Mototaxi Runner y biblioteca MySQL/Java.",
               },
               {
                 icon: Briefcase,
                 t: "Clothes Marina · freelance",
-                d: "49 interacciones en Google en el 1.er mes — catálogo en producción para tienda real; única experiencia con cliente hasta ahora.",
+                d: "~2 ventas extra/día vs. operación previa; 49 interacciones Google en el 1.er mes; hardening P0/P1 + Security CI en producción.",
               },
               {
                 icon: Zap,
