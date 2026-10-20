@@ -503,9 +503,7 @@ const projects: PortfolioProject[] = [
   {
     title: "OFICIO Cyber Coach — Entrenamiento interactivo contra fraude digital",
     categories: ["full-stack", "frontend", "automation"],
-    noImagePreset: "briefcase",
-    noImageSrOnly:
-      "OFICIO Cyber Coach: entrenamiento EdTech contra fraude digital (demo en Vercel)",
+    img: "project-oficio-cyber-coach.png",
     tags: [
       "React",
       "TypeScript",
